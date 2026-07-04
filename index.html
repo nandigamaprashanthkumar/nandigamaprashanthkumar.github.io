@@ -922,9 +922,9 @@
 //    "Trades" sheet, format = CSV → copy the link → paste below.
 //    Columns required, in this exact order: Date, Pair, Strategy, PnL, Notes
 //    Date format: YYYY-MM-DD   PnL format: plain number (e.g. 120 or -45)
-const SHEET_CSV_URL = "PASTE_YOUR_PUBLISHED_GOOGLE_SHEET_CSV_LINK_HERE";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTGQUHgDWDI68ueh7S54JlukVAI4_n4Yxd9ob1Dwdnjpp3I9302I7c6aAEe9v-Aw_VsB5NlTs4Dekc5/pub?gid=0&single=true&output=csv";
 
-// 2. Demo data shown until the link above is connected.
+// 2. Demo data shown only if the sheet above can't be reached.
 const DEMO_TRADES = [
   {date:"2026-06-02", pair:"EUR/USD", strategy:"Breakout", pnl:145, notes:"Clean break above the London range high, held into New York open."},
   {date:"2026-06-03", pair:"GBP/USD", strategy:"Pullback", pnl:-60, notes:"Entered too early on the retrace, stopped out before continuation."},
@@ -1135,12 +1135,6 @@ document.getElementById("nextMonth").addEventListener("click", () => {
   MAX_ABS_PNL = data.reduce((m,t) => Math.max(m, Math.abs(t.pnl)), 1);
 
   document.getElementById("statTradesLogged").textContent = data.length;
-
-  const banner = document.getElementById("tradeBanner");
-  if(isDemo){
-    banner.textContent = "Showing sample data — paste your published Google Sheet CSV link into SHEET_CSV_URL near the top of the script to go live.";
-    banner.classList.add("show");
-  }
 
   if(data.length){
     const latest = data.reduce((a,b) => a.date > b.date ? a : b);

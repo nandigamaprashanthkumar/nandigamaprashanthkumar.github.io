@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nandigama Prashanth Kumar — Engineer, Designer, Tester, Trader</title>
+<title>Nandigama Prashanth Kumar — Engineer, Designer, Trader</title>
 <meta name="description" content="Portfolio of Nandigama Prashanth Kumar — Programmer Analyst, AI Generalist, UI/UX Designer, and a daily-journaled trading practice.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -404,19 +404,6 @@
   /* ============================================================
      TRADING JOURNEY
      ============================================================ */
-  .trade-banner{
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--accent);
-    background:rgba(184,92,62,0.08);
-    border:1px solid rgba(184,92,62,0.25);
-    border-radius:var(--radius-sm);
-    padding:12px 16px;
-    margin-bottom:32px;
-    display:none;
-  }
-  .trade-banner.show{ display:block; }
-
   .trade-stats{
     display:grid;
     grid-template-columns:repeat(4,1fr);
@@ -840,8 +827,6 @@
       <div class="section-note">Every entry below is a real day logged — pair, strategy, and outcome, colored by result.</div>
     </div>
 
-    <div id="tradeBanner" class="trade-banner"></div>
-
     <div class="trade-stats" id="tradeStats">
       <div class="trade-stat">
         <div class="trade-stat-label">Month P&amp;L</div>
@@ -914,18 +899,23 @@
 
 <script>
 /* ============================================================
-   CONFIG — edit these two things to make the journal live
+   TRADE LOG — add today's trade by adding one line to this list
+   ============================================================
+   Format for each entry:
+     {date:"YYYY-MM-DD", pair:"EUR/USD", strategy:"Breakout", pnl:120, notes:"optional note"}
+
+   - date    → the day you took the trade, YYYY-MM-DD
+   - pair    → whatever you traded, e.g. "EUR/USD", "XAU/USD"
+   - strategy→ short label for what you did, e.g. "Breakout", "Pullback"
+   - pnl     → plain number, positive for a win, negative for a loss (no $ sign)
+   - notes   → optional, a short line about how the trade went
+
+   To log a new day: copy the last line, paste a new one below it,
+   change the values, save the file, and re-upload/redeploy it to
+   wherever you're hosting the site. That's the whole workflow —
+   no sheet, no fetch, it's just this list.
    ============================================================ */
-
-// 1. Paste your PUBLISHED Google Sheet CSV link here.
-//    Google Sheets → File → Share → Publish to web → select the
-//    "Trades" sheet, format = CSV → copy the link → paste below.
-//    Columns required, in this exact order: Date, Pair, Strategy, PnL, Notes
-//    Date format: YYYY-MM-DD   PnL format: plain number (e.g. 120 or -45)
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTGQUHgDWDI68ueh7S54JlukVAI4_n4Yxd9ob1Dwdnjpp3I9302I7c6aAEe9v-Aw_VsB5NlTs4Dekc5/pubhtml";
-
-// 2. Demo data shown only if the sheet above can't be reached.
-const DEMO_TRADES = [
+const TRADES = [
   {date:"2026-06-02", pair:"EUR/USD", strategy:"Breakout", pnl:145, notes:"Clean break above the London range high, held into New York open."},
   {date:"2026-06-03", pair:"GBP/USD", strategy:"Pullback", pnl:-60, notes:"Entered too early on the retrace, stopped out before continuation."},
   {date:"2026-06-04", pair:"XAU/USD", strategy:"Range", pnl:90, notes:"Faded the range high, took partials into the mid-point."},
@@ -945,66 +935,6 @@ const DEMO_TRADES = [
   {date:"2026-07-02", pair:"GBP/USD", strategy:"News Fade", pnl:-50, notes:"NFP volatility whipsawed the position."},
   {date:"2026-07-03", pair:"XAU/USD", strategy:"Pullback", pnl:95, notes:"Solid pullback entry off the daily support."},
 ];
-
-/* ============================================================
-   CSV PARSING
-   ============================================================ */
-function parseCSV(text){
-  const rows = [];
-  let cur = "", row = [], inQuotes = false;
-  for(let i=0;i<text.length;i++){
-    const c = text[i];
-    if(inQuotes){
-      if(c === '"'){
-        if(text[i+1] === '"'){ cur += '"'; i++; }
-        else inQuotes = false;
-      } else cur += c;
-    } else {
-      if(c === '"') inQuotes = true;
-      else if(c === ','){ row.push(cur); cur = ""; }
-      else if(c === '\n' || c === '\r'){
-        if(c === '\r' && text[i+1] === '\n') i++;
-        row.push(cur); cur = ""; rows.push(row); row = [];
-      } else cur += c;
-    }
-  }
-  if(cur.length || row.length){ row.push(cur); rows.push(row); }
-  return rows.filter(r => !(r.length === 1 && r[0].trim() === ""));
-}
-
-async function loadTrades(){
-  if(!SHEET_CSV_URL || SHEET_CSV_URL.indexOf("PASTE_YOUR") !== -1){
-    return { data: DEMO_TRADES, isDemo: true };
-  }
-  try{
-    const res = await fetch(SHEET_CSV_URL);
-    if(!res.ok) throw new Error("Sheet fetch failed: " + res.status);
-    const text = await res.text();
-    const rows = parseCSV(text);
-    if(rows.length < 2) throw new Error("Sheet has no data rows");
-    const headers = rows[0].map(h => h.trim().toLowerCase());
-    const idx = {
-      date: headers.indexOf("date"),
-      pair: headers.indexOf("pair"),
-      strategy: headers.indexOf("strategy"),
-      pnl: headers.indexOf("pnl"),
-      notes: headers.indexOf("notes")
-    };
-    const data = rows.slice(1)
-      .filter(r => r[idx.date] && r[idx.date].trim())
-      .map(r => ({
-        date: r[idx.date].trim(),
-        pair: (r[idx.pair] || "—").trim(),
-        strategy: (r[idx.strategy] || "—").trim(),
-        pnl: parseFloat((r[idx.pnl] || "0").replace(/[^0-9.\-]/g,"")) || 0,
-        notes: (r[idx.notes] || "").trim()
-      }));
-    return { data, isDemo: false };
-  } catch(err){
-    console.warn("Trading journal: falling back to demo data —", err.message);
-    return { data: DEMO_TRADES, isDemo: true };
-  }
-}
 
 /* ============================================================
    STATE + CALENDAR RENDERING
@@ -1126,9 +1056,9 @@ document.getElementById("nextMonth").addEventListener("click", () => {
 /* ============================================================
    INIT
    ============================================================ */
-(async function init(){
+(function init(){
   renderWeekdayHeader();
-  const { data, isDemo } = await loadTrades();
+  const data = TRADES;
   ALL_TRADES = data;
   TRADES_BY_DATE = {};
   data.forEach(t => { TRADES_BY_DATE[t.date] = t; });

@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nandigama Prashanth Kumar — Engineer, Designer, Trader</title>
+<meta name="description" content="Portfolio of Nandigama Prashanth Kumar — Programmer Analyst, AI Generalist, UI/UX Designer, and a daily-journaled trading practice.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     ============================================================ */
+  :root{
+    --bg:        #F2ECE0;
+    --bg-alt:    #EAE1CE;
+    --bg-raised: #E3D8C0;
+    --paper:     #241F18;
+    --ink:       #3A342A;
+    --ink-dim:   #6B6252;
+    --muted:     #8C8272;
+    --accent:    #B85C3E;
+    --accent-ink:#F2ECE0;
+    --gain:      #5A8A54;
+    --loss:      #B2483A;
+    --line:      rgba(36,31,24,0.12);
+    --line-strong: rgba(36,31,24,0.22);
+    --radius-sm: 8px;
+    --radius:    14px;
+    --radius-lg: 22px;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono:  'IBM Plex Mono', 'SF Mono', monospace;
+    --maxw:  1120px;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    *,*::before,*::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--accent); color:var(--accent-ink); }
+
+  img{ max-width:100%; display:block; }
+
+  button{ font-family:inherit; cursor:pointer; }
+
+  :focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  /* grain overlay */
+  .grain{
+    position:fixed; inset:0; z-index:1;
+    pointer-events:none;
+    opacity:0.045;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 32px;
+  }
+  @media (max-width:640px){ .wrap{ padding:0 20px; } }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+  }
+
+  .section{
+    position:relative;
+    padding:120px 0;
+    border-top:1px solid var(--line);
+  }
+  @media (max-width:640px){ .section{ padding:80px 0; } }
+
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:24px;
+    margin-bottom:56px;
+    flex-wrap:wrap;
+  }
+  .section-title{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:clamp(32px,4.5vw,52px);
+    line-height:1.05;
+    margin:8px 0 0;
+    color:var(--paper);
+  }
+  .section-note{
+    font-family:var(--sans);
+    color:var(--muted);
+    max-width:340px;
+    font-size:15px;
+    margin-bottom:4px;
+  }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 32px;
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    backdrop-filter:blur(10px);
+    background:linear-gradient(to bottom, rgba(242,236,224,0.85), rgba(242,236,224,0));
+  }
+  .nav-mark{ color:var(--paper); font-weight:600; }
+  .nav-mark span{ color:var(--accent); }
+  .nav-links{ display:flex; gap:28px; }
+  .nav-links a{ color:var(--ink-dim); transition:color .2s; }
+  .nav-links a:hover{ color:var(--accent); }
+  @media (max-width:640px){
+    .nav-links{ display:none; }
+  }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    padding:140px 0 60px;
+  }
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:center;
+    gap:40px;
+  }
+  @media (max-width:800px){
+    .hero-inner{ grid-template-columns:1fr; }
+    .hero-stamp{ order:-1; width:120px; }
+  }
+  .hero-role{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:22px;
+  }
+  .hero-role .dot{ color:var(--accent); }
+  .hero-name{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:clamp(44px,8.5vw,108px);
+    line-height:0.98;
+    letter-spacing:-0.01em;
+    color:var(--paper);
+    margin:0;
+  }
+  .hero-name em{ font-style:italic; font-weight:400; color:var(--accent); }
+  .hero-sub{
+    margin-top:26px;
+    max-width:520px;
+    font-size:17px;
+    color:var(--ink-dim);
+  }
+  .hero-loc{
+    margin-top:28px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .hero-loc::before{ content:"◍"; color:var(--gain); }
+
+  .hero-stamp{ width:168px; height:168px; flex-shrink:0; }
+  .stamp-rotate{ animation:spin 40s linear infinite; transform-origin:center; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .scroll-cue{
+    position:absolute;
+    bottom:40px; left:32px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .scroll-cue::after{
+    content:"";
+    width:1px; height:34px;
+    background:linear-gradient(var(--accent), transparent);
+    animation:drop 2s ease-in-out infinite;
+  }
+  @keyframes drop{ 0%{ opacity:0; } 40%{ opacity:1; } 100%{ opacity:0; } }
+  @media (max-width:640px){ .scroll-cue{ display:none; } }
+
+  /* ============================================================
+     ABOUT
+     ============================================================ */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:64px;
+  }
+  @media (max-width:800px){ .about-grid{ grid-template-columns:1fr; gap:40px; } }
+  .about-text p{
+    font-family:var(--serif);
+    font-size:clamp(20px,2.6vw,27px);
+    line-height:1.5;
+    color:var(--paper);
+    font-weight:400;
+    margin:0 0 20px;
+  }
+  .about-text p .hl{ color:var(--accent); font-style:italic; }
+  .about-text .fine{
+    font-family:var(--sans);
+    font-size:15px;
+    color:var(--muted);
+    line-height:1.7;
+    margin-top:24px;
+  }
+
+  .stat-stack{ display:flex; flex-direction:column; gap:0; }
+  .stat-row{
+    padding:20px 0;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .stat-row:last-child{ border-bottom:1px solid var(--line); }
+  .stat-num{
+    font-family:var(--mono);
+    font-size:30px;
+    color:var(--accent);
+  }
+  .stat-label{
+    font-family:var(--sans);
+    font-size:13px;
+    color:var(--muted);
+    max-width:150px;
+    text-align:right;
+  }
+
+  /* ============================================================
+     SKILLS
+     ============================================================ */
+  .skill-groups{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:40px 60px;
+  }
+  @media (max-width:640px){ .skill-groups{ grid-template-columns:1fr; } }
+  .skill-cat-label{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .skill-cat-label::before{
+    content:"";
+    width:14px; height:1px;
+    background:var(--accent);
+  }
+  .skill-tags{ display:flex; flex-wrap:wrap; gap:10px; }
+  .skill-tag{
+    font-family:var(--mono);
+    font-size:13px;
+    padding:8px 14px;
+    border:1px solid var(--line-strong);
+    border-radius:100px;
+    color:var(--ink);
+    transition:border-color .2s, color .2s, background .2s;
+  }
+  .skill-tag:hover{ border-color:var(--accent); color:var(--accent); background:rgba(184,92,62,0.08); }
+
+  /* ============================================================
+     EXPERIENCE
+     ============================================================ */
+  .timeline{ display:flex; flex-direction:column; }
+  .tl-row{
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:24px;
+    padding:26px 0;
+    border-top:1px solid var(--line);
+  }
+  .timeline .tl-row:last-child{ border-bottom:1px solid var(--line); }
+  @media (max-width:640px){ .tl-row{ grid-template-columns:1fr; gap:6px; } }
+  .tl-date{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--accent);
+    white-space:nowrap;
+  }
+  .tl-role{
+    font-family:var(--serif);
+    font-size:20px;
+    color:var(--paper);
+    margin:0 0 4px;
+  }
+  .tl-meta{
+    font-family:var(--sans);
+    font-size:14px;
+    color:var(--muted);
+  }
+
+  /* ============================================================
+     PROJECTS
+     ============================================================ */
+  .project-list{ display:flex; flex-direction:column; gap:28px; }
+  .project-card{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:32px;
+    padding:32px;
+    background:var(--bg-alt);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    transition:border-color .25s, transform .25s;
+  }
+  .project-card:hover{ border-color:var(--line-strong); transform:translateY(-2px); }
+  @media (max-width:760px){ .project-card{ grid-template-columns:1fr; } }
+  .project-thumb{
+    aspect-ratio:4/3;
+    border-radius:var(--radius);
+    background:
+      radial-gradient(circle at 30% 20%, rgba(184,92,62,0.2), transparent 60%),
+      linear-gradient(135deg, var(--bg-raised), var(--bg));
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    text-align:center;
+    padding:16px;
+  }
+  .project-card.placeholder{
+    background:transparent;
+    border:1px dashed var(--line-strong);
+  }
+  .project-card.placeholder .project-thumb{
+    background:transparent;
+    border:1px dashed var(--line-strong);
+  }
+  .project-num{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .project-title{
+    font-family:var(--serif);
+    font-size:26px;
+    color:var(--paper);
+    margin:10px 0 10px;
+  }
+  .project-desc{ color:var(--ink-dim); font-size:15px; max-width:52ch; }
+  .project-tags{ margin-top:18px; display:flex; gap:8px; flex-wrap:wrap; }
+  .project-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:100px;
+    background:var(--bg-raised);
+    color:var(--muted);
+  }
+
+  /* ============================================================
+     TRADING JOURNEY
+     ============================================================ */
+  .trade-banner{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--accent);
+    background:rgba(184,92,62,0.08);
+    border:1px solid rgba(184,92,62,0.25);
+    border-radius:var(--radius-sm);
+    padding:12px 16px;
+    margin-bottom:32px;
+    display:none;
+  }
+  .trade-banner.show{ display:block; }
+
+  .trade-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    margin-bottom:36px;
+  }
+  @media (max-width:640px){ .trade-stats{ grid-template-columns:repeat(2,1fr); } }
+  .trade-stat{
+    background:var(--bg-alt);
+    padding:22px 20px;
+  }
+  .trade-stat-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .trade-stat-val{
+    font-family:var(--mono);
+    font-size:24px;
+    color:var(--paper);
+  }
+  .trade-stat-val.gain{ color:var(--gain); }
+  .trade-stat-val.loss{ color:var(--loss); }
+
+  .cal-controls{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .cal-month{
+    font-family:var(--serif);
+    font-size:22px;
+    color:var(--paper);
+    min-width:180px;
+    text-align:center;
+  }
+  .cal-nav-btn{
+    background:var(--bg-alt);
+    border:1px solid var(--line-strong);
+    color:var(--paper);
+    width:36px; height:36px;
+    border-radius:100px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+    transition:border-color .2s, color .2s;
+  }
+  .cal-nav-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .cal-legend{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted);
+  }
+  .legend-swatch{ display:flex; align-items:center; gap:6px; }
+  .legend-dot{ width:10px; height:10px; border-radius:3px; }
+
+  .cal-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+  }
+  .cal-weekday{
+    font-family:var(--mono);
+    font-size:11px;
+    text-transform:uppercase;
+    color:var(--muted);
+    text-align:center;
+    padding-bottom:8px;
+  }
+  .day-cell{
+    aspect-ratio:1/0.85;
+    border-radius:var(--radius-sm);
+    border:1px solid var(--line);
+    background:var(--bg-alt);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding:8px 9px;
+    font-family:var(--mono);
+    color:var(--ink);
+    text-align:left;
+    transition:transform .15s, border-color .15s;
+  }
+  .day-cell.has-trade{ cursor:pointer; }
+  .day-cell.has-trade:hover{ transform:translateY(-2px); border-color:var(--line-strong); }
+  .day-cell.pad{ background:transparent; border-color:transparent; }
+  .day-cell.weekend{ opacity:0.45; }
+  .day-cell.active{ outline:2px solid var(--accent); outline-offset:1px; }
+  .day-num{ font-size:11px; color:var(--muted); }
+  .day-pnl{ font-size:12px; font-weight:600; }
+  .day-pnl.gain{ color:var(--gain); }
+  .day-pnl.loss{ color:var(--loss); }
+
+  .trade-detail{
+    margin-top:24px;
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+  }
+  .trade-detail.open{ max-height:400px; }
+  .trade-detail-inner{
+    background:var(--bg-raised);
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius);
+    padding:26px 28px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:20px;
+  }
+  @media (max-width:600px){ .trade-detail-inner{ grid-template-columns:1fr; } }
+  .td-stamp{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:10px;
+  }
+  .td-pair{ font-family:var(--serif); font-size:24px; color:var(--paper); margin:0 0 8px; }
+  .td-strategy{ font-family:var(--sans); font-size:14px; color:var(--muted); margin-bottom:10px; }
+  .td-notes{ font-family:var(--sans); font-size:14px; color:var(--ink-dim); max-width:48ch; }
+  .td-pnl{ font-family:var(--mono); font-size:34px; text-align:right; }
+  .td-close{
+    justify-self:end;
+    align-self:start;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted);
+    border:1px solid var(--line-strong);
+    border-radius:100px;
+    padding:6px 12px;
+  }
+  .td-close:hover{ color:var(--accent); border-color:var(--accent); }
+
+  .trade-empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--muted);
+    font-family:var(--sans);
+  }
+
+  /* ============================================================
+     CONTACT / FOOTER
+     ============================================================ */
+  .contact{
+    padding:120px 0 60px;
+    border-top:1px solid var(--line);
+    text-align:center;
+  }
+  .contact-title{
+    font-family:var(--serif);
+    font-size:clamp(34px,6vw,64px);
+    color:var(--paper);
+    margin:0 0 28px;
+    line-height:1.05;
+  }
+  .contact-title em{ color:var(--accent); font-style:italic; }
+  .contact-email{
+    font-family:var(--mono);
+    font-size:clamp(16px,2.4vw,20px);
+    color:var(--accent);
+    border-bottom:1px solid var(--accent);
+    padding-bottom:4px;
+  }
+  .contact-links{
+    margin-top:36px;
+    display:flex;
+    justify-content:center;
+    gap:28px;
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--ink-dim);
+  }
+  .contact-links a:hover{ color:var(--accent); }
+  .footer-stamp{ margin:70px auto 0; width:64px; height:64px; opacity:0.5; }
+  .footer-note{
+    margin-top:20px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:0.05em;
+  }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav">
+  <div class="nav-mark">N.P.K<span>.</span></div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#work">Work</a>
+    <a href="#trades">Trading</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<header id="hero" class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="hero-role">Programmer Analyst <span class="dot">·</span> AI Generalist <span class="dot">·</span> UI/UX Designer</div>
+      <h1 class="hero-name">Nandigama<br><em>Prashanth</em> Kumar</h1>
+      <p class="hero-sub">I build interfaces and applications by day, and keep a disciplined, dated ledger of every trade I take. Two practices, one habit underneath both: pay attention, write it down, get better.</p>
+      <div class="hero-loc">Hyderabad, Telangana, India</div>
+    </div>
+    <svg class="hero-stamp" viewBox="0 0 200 200" aria-hidden="true">
+      <g class="stamp-rotate">
+        <circle cx="100" cy="100" r="92" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="2 5"/>
+        <path id="stampCirclePath" fill="none" d="M 100,100 m -70,0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0"/>
+        <text font-family="IBM Plex Mono" font-size="10.5" letter-spacing="3" fill="var(--muted)">
+          <textPath href="#stampCirclePath">
+            NANDIGAMA · PRASHANTH · KUMAR · EST. 2021 ·
+          </textPath>
+        </text>
+      </g>
+      <circle cx="100" cy="100" r="46" fill="var(--bg-alt)" stroke="var(--line-strong)"/>
+      <text x="100" y="107" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="28" fill="var(--paper)">NPK</text>
+    </svg>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</header>
+
+<!-- ============================================================
+     ABOUT
+     ============================================================ -->
+<section id="about" class="section">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I'm a Computer Science engineer who never settled into one lane — <span class="hl">code, interface design, and AI</span> on one side, and a self-taught, hand-logged trading practice on the other.</p>
+        <p>Currently a Programmer Analyst at <span class="hl">Cognizant</span>, I've spent the last few years moving through React front-ends, Python and Java systems, AI tooling, cybersecurity fundamentals, and visual design — while quietly keeping a daily record of every trade, win or loss, pair by pair.</p>
+        <div class="fine">BE in Computer Science, Anna University Chennai (2021–2025). Certified in AI Fluency for Nonprofits, AI Fluency Framework &amp; Foundations, and Claude Code in Action.</div>
+      </div>
+      <div class="stat-stack" id="aboutStats">
+        <div class="stat-row"><span class="stat-num">6</span><span class="stat-label">Roles across dev, design &amp; AI since 2023</span></div>
+        <div class="stat-row"><span class="stat-num">3</span><span class="stat-label">Certifications in applied AI</span></div>
+        <div class="stat-row"><span class="stat-num">1</span><span class="stat-label">Published mHealth research project</span></div>
+        <div class="stat-row"><span class="stat-num" id="statTradesLogged">—</span><span class="stat-label">Trades logged in the journal below</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SKILLS
+     ============================================================ -->
+<section id="skills" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Index</div>
+        <h2 class="section-title">What I work with</h2>
+      </div>
+      <div class="section-note">Grouped by the kind of problem it solves, not by how long I've used it.</div>
+    </div>
+    <div class="skill-groups">
+      <div>
+        <div class="skill-cat-label">Engineering</div>
+        <div class="skill-tags">
+          <span class="skill-tag">React.js</span>
+          <span class="skill-tag">Java</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">REST APIs</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-cat-label">AI &amp; Automation</div>
+        <div class="skill-tags">
+          <span class="skill-tag">AI Generalist</span>
+          <span class="skill-tag">Claude Code</span>
+          <span class="skill-tag">Prompt &amp; Workflow Design</span>
+          <span class="skill-tag">AI Fluency (Nonprofits)</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-cat-label">Design</div>
+        <div class="skill-tags">
+          <span class="skill-tag">UI/UX Design</span>
+          <span class="skill-tag">Graphic Design</span>
+          <span class="skill-tag">Visual Systems</span>
+          <span class="skill-tag">Social Media Design</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-cat-label">Other Practices</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Cybersecurity Fundamentals</span>
+          <span class="skill-tag">Standards &amp; QA (BIS)</span>
+          <span class="skill-tag">Market &amp; Trade Analysis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     EXPERIENCE
+     ============================================================ -->
+<section id="experience" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Ledger</div>
+        <h2 class="section-title">Where I've worked</h2>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="tl-row">
+        <div class="tl-date">MAY 2026 — PRESENT</div>
+        <div>
+          <h3 class="tl-role">Programmer Analyst Trainee (PAT)</h3>
+          <div class="tl-meta">Cognizant · Hyderabad — following 4 months of foundational training in Chennai (Jan–Apr 2026)</div>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">MAR 2025 — JAN 2026</div>
+        <div>
+          <h3 class="tl-role">Software Developer / Social Media Manager</h3>
+          <div class="tl-meta">TFG – AI &amp; IT Solutions · Hyderabad</div>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">AUG 2024 — FEB 2025</div>
+        <div>
+          <h3 class="tl-role">React Developer</h3>
+          <div class="tl-meta">TFG – AI &amp; IT Solutions · Hyderabad</div>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">FEB 2024 — APR 2024</div>
+        <div>
+          <h3 class="tl-role">Cybersecurity</h3>
+          <div class="tl-meta">Corizo</div>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">DEC 2023 — MAR 2024</div>
+        <div>
+          <h3 class="tl-role">Graphic Designer</h3>
+          <div class="tl-meta">Maven Web Marketing</div>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">JAN 2024 — FEB 2024</div>
+        <div>
+          <h3 class="tl-role">Python Developer</h3>
+          <div class="tl-meta">Oasis Infobyte · New Delhi</div>
+        </div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-date">AUG 2023 — PRESENT</div>
+        <div>
+          <h3 class="tl-role">Member, BIS Standards Club</h3>
+          <div class="tl-meta">Bureau of Indian Standards</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROJECTS
+     ============================================================ -->
+<section id="work" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Selected work</div>
+        <h2 class="section-title">Things I've built</h2>
+      </div>
+      <div class="section-note">Two slots below are placeholders — swap in your own case studies whenever you're ready.</div>
+    </div>
+    <div class="project-list">
+      <div class="project-card">
+        <div class="project-thumb">Smart Medicine<br>Reminder System</div>
+        <div>
+          <div class="project-num">01 · Published Research</div>
+          <h3 class="project-title">Smart Medicine Reminder System</h3>
+          <p class="project-desc">A mobile mHealth assistant built with React Native that schedules medication reminders around a user's real timezone, so the notification lands at the right moment no matter where they are.</p>
+          <div class="project-tags">
+            <span class="project-tag">React Native</span>
+            <span class="project-tag">Timezone-aware Scheduling</span>
+            <span class="project-tag">mHealth</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card placeholder">
+        <div class="project-thumb">Add project<br>screenshot</div>
+        <div>
+          <div class="project-num">02 · Your project title</div>
+          <h3 class="project-title">Replace with a real case study</h3>
+          <p class="project-desc">Swap this card's text and thumbnail for a project you want to feature — what it does, what you built it with, and a link if it's live.</p>
+          <div class="project-tags">
+            <span class="project-tag">Tech stack</span>
+            <span class="project-tag">Role</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card placeholder">
+        <div class="project-thumb">Add project<br>screenshot</div>
+        <div>
+          <div class="project-num">03 · Your project title</div>
+          <h3 class="project-title">Replace with a real case study</h3>
+          <p class="project-desc">Another slot ready for your work — from TFG, a personal build, or anything from your design practice.</p>
+          <div class="project-tags">
+            <span class="project-tag">Tech stack</span>
+            <span class="project-tag">Role</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TRADING JOURNEY
+     ============================================================ -->
+<section id="trades" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Daily practice</div>
+        <h2 class="section-title">Trading journey</h2>
+      </div>
+      <div class="section-note">Every entry below is a real day logged — pair, strategy, and outcome, colored by result.</div>
+    </div>
+
+    <div id="tradeBanner" class="trade-banner"></div>
+
+    <div class="trade-stats" id="tradeStats">
+      <div class="trade-stat">
+        <div class="trade-stat-label">Month P&amp;L</div>
+        <div class="trade-stat-val" id="statMonthPnl">—</div>
+      </div>
+      <div class="trade-stat">
+        <div class="trade-stat-label">Win rate</div>
+        <div class="trade-stat-val" id="statWinRate">—</div>
+      </div>
+      <div class="trade-stat">
+        <div class="trade-stat-label">Trades this month</div>
+        <div class="trade-stat-val" id="statTradeCount">—</div>
+      </div>
+      <div class="trade-stat">
+        <div class="trade-stat-label">Best day</div>
+        <div class="trade-stat-val" id="statBestDay">—</div>
+      </div>
+    </div>
+
+    <div class="cal-controls">
+      <button class="cal-nav-btn" id="prevMonth" aria-label="Previous month">‹</button>
+      <div class="cal-month" id="calMonthLabel">—</div>
+      <button class="cal-nav-btn" id="nextMonth" aria-label="Next month">›</button>
+    </div>
+    <div class="cal-legend" style="justify-content:center; margin-bottom:18px;">
+      <span class="legend-swatch"><span class="legend-dot" style="background:var(--loss)"></span>Loss</span>
+      <span class="legend-swatch"><span class="legend-dot" style="background:var(--bg-alt); border:1px solid var(--line-strong)"></span>No trade</span>
+      <span class="legend-swatch"><span class="legend-dot" style="background:var(--gain)"></span>Gain</span>
+    </div>
+
+    <div class="cal-grid" id="calWeekdays"></div>
+    <div class="cal-grid" id="calGrid" style="margin-top:6px;"></div>
+
+    <div class="trade-detail" id="tradeDetail">
+      <div class="trade-detail-inner">
+        <div>
+          <div class="td-stamp" id="tdStamp">Entry logged</div>
+          <h4 class="td-pair" id="tdPair">—</h4>
+          <div class="td-strategy" id="tdStrategy">—</div>
+          <div class="td-notes" id="tdNotes"></div>
+        </div>
+        <div>
+          <button class="td-close" id="tdClose">Close ✕</button>
+          <div class="td-pnl" id="tdPnl">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+     ============================================================ -->
+<footer id="contact" class="contact">
+  <div class="wrap">
+    <h2 class="contact-title">Let's build or<br><em>trade</em> something.</h2>
+    <a class="contact-email" href="mailto:johnsonprashanth48@gmail.com">johnsonprashanth48@gmail.com</a>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/nandigama-prashanth-kumar" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#hero">Back to top</a>
+    </div>
+    <svg class="footer-stamp" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="92" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="2 5"/>
+      <circle cx="100" cy="100" r="46" fill="none" stroke="var(--line-strong)"/>
+      <text x="100" y="107" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="28" fill="var(--muted)">NPK</text>
+    </svg>
+    <div class="footer-note">Hyderabad, Telangana, India — logged daily since 2021.</div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG — edit these two things to make the journal live
+   ============================================================ */
+
+// 1. Paste your PUBLISHED Google Sheet CSV link here.
+//    Google Sheets → File → Share → Publish to web → select the
+//    "Trades" sheet, format = CSV → copy the link → paste below.
+//    Columns required, in this exact order: Date, Pair, Strategy, PnL, Notes
+//    Date format: YYYY-MM-DD   PnL format: plain number (e.g. 120 or -45)
+const SHEET_CSV_URL = "PASTE_YOUR_PUBLISHED_GOOGLE_SHEET_CSV_LINK_HERE";
+
+// 2. Demo data shown until the link above is connected.
+const DEMO_TRADES = [
+  {date:"2026-06-02", pair:"EUR/USD", strategy:"Breakout", pnl:145, notes:"Clean break above the London range high, held into New York open."},
+  {date:"2026-06-03", pair:"GBP/USD", strategy:"Pullback", pnl:-60, notes:"Entered too early on the retrace, stopped out before continuation."},
+  {date:"2026-06-04", pair:"XAU/USD", strategy:"Range", pnl:90, notes:"Faded the range high, took partials into the mid-point."},
+  {date:"2026-06-05", pair:"USD/JPY", strategy:"News Fade", pnl:-35, notes:"Faded the initial spike, volatility stayed one-directional."},
+  {date:"2026-06-08", pair:"EUR/USD", strategy:"Breakout", pnl:210, notes:"Strong trend day, trailed the stop and let it run."},
+  {date:"2026-06-09", pair:"GBP/JPY", strategy:"Pullback", pnl:75, notes:"Textbook pullback to the 20 EMA."},
+  {date:"2026-06-10", pair:"XAU/USD", strategy:"Breakout", pnl:-80, notes:"False breakout, reversed hard right after entry."},
+  {date:"2026-06-11", pair:"EUR/USD", strategy:"Range", pnl:55, notes:"Small, disciplined range scalp."},
+  {date:"2026-06-15", pair:"USD/CAD", strategy:"News Fade", pnl:130, notes:"Oil inventory data created a fadeable spike."},
+  {date:"2026-06-16", pair:"GBP/USD", strategy:"Breakout", pnl:-40, notes:"Choppy session, cut the loss early."},
+  {date:"2026-06-17", pair:"XAU/USD", strategy:"Pullback", pnl:165, notes:"Best trade of the week, patient entry paid off."},
+  {date:"2026-06-18", pair:"EUR/USD", strategy:"Range", pnl:20, notes:"Quiet day, small win to close the week."},
+  {date:"2026-06-22", pair:"USD/JPY", strategy:"Breakout", pnl:100, notes:"BoJ commentary triggered a clean directional move."},
+  {date:"2026-06-23", pair:"GBP/USD", strategy:"Pullback", pnl:-25, notes:"Minor loss, sized down after prior week's run."},
+  {date:"2026-06-24", pair:"XAU/USD", strategy:"Range", pnl:60, notes:"Consistent range behavior, took the easy scalp."},
+  {date:"2026-07-01", pair:"EUR/USD", strategy:"Breakout", pnl:180, notes:"Month started strong, momentum carried through the session."},
+  {date:"2026-07-02", pair:"GBP/USD", strategy:"News Fade", pnl:-50, notes:"NFP volatility whipsawed the position."},
+  {date:"2026-07-03", pair:"XAU/USD", strategy:"Pullback", pnl:95, notes:"Solid pullback entry off the daily support."},
+];
+
+/* ============================================================
+   CSV PARSING
+   ============================================================ */
+function parseCSV(text){
+  const rows = [];
+  let cur = "", row = [], inQuotes = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(inQuotes){
+      if(c === '"'){
+        if(text[i+1] === '"'){ cur += '"'; i++; }
+        else inQuotes = false;
+      } else cur += c;
+    } else {
+      if(c === '"') inQuotes = true;
+      else if(c === ','){ row.push(cur); cur = ""; }
+      else if(c === '\n' || c === '\r'){
+        if(c === '\r' && text[i+1] === '\n') i++;
+        row.push(cur); cur = ""; rows.push(row); row = [];
+      } else cur += c;
+    }
+  }
+  if(cur.length || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r => !(r.length === 1 && r[0].trim() === ""));
+}
+
+async function loadTrades(){
+  if(!SHEET_CSV_URL || SHEET_CSV_URL.indexOf("PASTE_YOUR") !== -1){
+    return { data: DEMO_TRADES, isDemo: true };
+  }
+  try{
+    const res = await fetch(SHEET_CSV_URL);
+    if(!res.ok) throw new Error("Sheet fetch failed: " + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if(rows.length < 2) throw new Error("Sheet has no data rows");
+    const headers = rows[0].map(h => h.trim().toLowerCase());
+    const idx = {
+      date: headers.indexOf("date"),
+      pair: headers.indexOf("pair"),
+      strategy: headers.indexOf("strategy"),
+      pnl: headers.indexOf("pnl"),
+      notes: headers.indexOf("notes")
+    };
+    const data = rows.slice(1)
+      .filter(r => r[idx.date] && r[idx.date].trim())
+      .map(r => ({
+        date: r[idx.date].trim(),
+        pair: (r[idx.pair] || "—").trim(),
+        strategy: (r[idx.strategy] || "—").trim(),
+        pnl: parseFloat((r[idx.pnl] || "0").replace(/[^0-9.\-]/g,"")) || 0,
+        notes: (r[idx.notes] || "").trim()
+      }));
+    return { data, isDemo: false };
+  } catch(err){
+    console.warn("Trading journal: falling back to demo data —", err.message);
+    return { data: DEMO_TRADES, isDemo: true };
+  }
+}
+
+/* ============================================================
+   STATE + CALENDAR RENDERING
+   ============================================================ */
+let ALL_TRADES = [];
+let TRADES_BY_DATE = {};
+let MAX_ABS_PNL = 1;
+let currentMonth, currentYear;
+const WEEKDAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function fmtMoney(v){
+  const sign = v > 0 ? "+" : v < 0 ? "−" : "";
+  return sign + "$" + Math.abs(Math.round(v)).toLocaleString();
+}
+
+function renderWeekdayHeader(){
+  const el = document.getElementById("calWeekdays");
+  el.innerHTML = WEEKDAYS.map(d => `<div class="cal-weekday">${d}</div>`).join("");
+}
+
+function colorForPnl(pnl){
+  if(!pnl) return null;
+  const ratio = Math.min(Math.abs(pnl) / MAX_ABS_PNL, 1);
+  const alpha = 0.14 + ratio * 0.55;
+  return pnl > 0
+    ? `rgba(90,138,84,${alpha.toFixed(2)})`
+    : `rgba(178,72,58,${alpha.toFixed(2)})`;
+}
+
+function renderCalendar(){
+  document.getElementById("calMonthLabel").textContent = `${MONTH_NAMES[currentMonth]} ${currentYear}`;
+  const grid = document.getElementById("calGrid");
+  grid.innerHTML = "";
+
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const startOffset = (firstDay.getDay() + 6) % 7; // convert Sun=0 to Mon=0 start
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  for(let i=0;i<startOffset;i++){
+    const pad = document.createElement("div");
+    pad.className = "day-cell pad";
+    grid.appendChild(pad);
+  }
+
+  let monthPnl = 0, wins = 0, trades = 0, best = null;
+
+  for(let d=1; d<=daysInMonth; d++){
+    const dateObj = new Date(currentYear, currentMonth, d);
+    const key = dateObj.toISOString().slice(0,10);
+    const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
+    const trade = TRADES_BY_DATE[key];
+
+    const cell = document.createElement(trade ? "button" : "div");
+    cell.className = "day-cell" + (isWeekend ? " weekend" : "") + (trade ? " has-trade" : "");
+    if(trade){
+      cell.dataset.date = key;
+      const bg = colorForPnl(trade.pnl);
+      if(bg) cell.style.background = bg;
+      monthPnl += trade.pnl;
+      trades++;
+      if(trade.pnl > 0) wins++;
+      if(best === null || trade.pnl > best.pnl) best = trade;
+    }
+    cell.innerHTML = `<span class="day-num">${d}</span>` +
+      (trade ? `<span class="day-pnl ${trade.pnl >= 0 ? 'gain':'loss'}">${fmtMoney(trade.pnl)}</span>` : "");
+    grid.appendChild(cell);
+  }
+
+  document.getElementById("statMonthPnl").textContent = trades ? fmtMoney(monthPnl) : "—";
+  const monthPnlEl = document.getElementById("statMonthPnl");
+  monthPnlEl.className = "trade-stat-val" + (trades ? (monthPnl >= 0 ? " gain" : " loss") : "");
+  document.getElementById("statWinRate").textContent = trades ? Math.round((wins/trades)*100) + "%" : "—";
+  document.getElementById("statTradeCount").textContent = trades || "—";
+  document.getElementById("statBestDay").textContent = best ? fmtMoney(best.pnl) : "—";
+
+  grid.querySelectorAll(".day-cell.has-trade").forEach(cell => {
+    cell.addEventListener("click", () => showTradeDetail(cell.dataset.date));
+  });
+}
+
+function showTradeDetail(dateKey){
+  const trade = TRADES_BY_DATE[dateKey];
+  if(!trade) return;
+  document.querySelectorAll(".day-cell.active").forEach(c => c.classList.remove("active"));
+  const cell = document.querySelector(`.day-cell[data-date="${dateKey}"]`);
+  if(cell) cell.classList.add("active");
+
+  const d = new Date(dateKey);
+  const label = d.toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase();
+  document.getElementById("tdStamp").textContent = "Entry logged — " + label;
+  document.getElementById("tdPair").textContent = trade.pair;
+  document.getElementById("tdStrategy").textContent = "Strategy: " + trade.strategy;
+  document.getElementById("tdNotes").textContent = trade.notes || "No notes recorded for this entry.";
+  const pnlEl = document.getElementById("tdPnl");
+  pnlEl.textContent = fmtMoney(trade.pnl);
+  pnlEl.style.color = trade.pnl >= 0 ? "var(--gain)" : "var(--loss)";
+  document.getElementById("tradeDetail").classList.add("open");
+}
+
+document.getElementById("tdClose").addEventListener("click", () => {
+  document.getElementById("tradeDetail").classList.remove("open");
+  document.querySelectorAll(".day-cell.active").forEach(c => c.classList.remove("active"));
+});
+
+document.getElementById("prevMonth").addEventListener("click", () => {
+  currentMonth--;
+  if(currentMonth < 0){ currentMonth = 11; currentYear--; }
+  document.getElementById("tradeDetail").classList.remove("open");
+  renderCalendar();
+});
+document.getElementById("nextMonth").addEventListener("click", () => {
+  currentMonth++;
+  if(currentMonth > 11){ currentMonth = 0; currentYear++; }
+  document.getElementById("tradeDetail").classList.remove("open");
+  renderCalendar();
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(async function init(){
+  renderWeekdayHeader();
+  const { data, isDemo } = await loadTrades();
+  ALL_TRADES = data;
+  TRADES_BY_DATE = {};
+  data.forEach(t => { TRADES_BY_DATE[t.date] = t; });
+  MAX_ABS_PNL = data.reduce((m,t) => Math.max(m, Math.abs(t.pnl)), 1);
+
+  document.getElementById("statTradesLogged").textContent = data.length;
+
+  const banner = document.getElementById("tradeBanner");
+  if(isDemo){
+    banner.textContent = "Showing sample data — paste your published Google Sheet CSV link into SHEET_CSV_URL near the top of the script to go live.";
+    banner.classList.add("show");
+  }
+
+  if(data.length){
+    const latest = data.reduce((a,b) => a.date > b.date ? a : b);
+    const ld = new Date(latest.date);
+    currentMonth = ld.getMonth();
+    currentYear = ld.getFullYear();
+  } else {
+    const now = new Date();
+    currentMonth = now.getMonth();
+    currentYear = now.getFullYear();
+  }
+  renderCalendar();
+})();
+</script>
+
+</body>
+</html>

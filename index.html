@@ -926,7 +926,7 @@ const TRADES = [
   {date:"2026-07-09", pair:"XAU/USD", strategy:"Reversal", pnl:-330.04, notes:"REVENGE TRADE : VIOLATED THE TRADE TULE NO.3"},
   {date:"2026-07-10", pair:"XAU/USD", strategy:"Reversal", pnl:0.88, notes:"Scalping 1:1"},
   {date:"2026-07-12", pair:"BTC/USD", strategy:"Reversal", pnl:-0.58, notes:"Scalping 1:1"},
-  {date:"2026-07-30", pair:"XAU/USD", strategy:"REVENGE", pnl:-200, notes:"REVENGE TRADE WITH OUT STOPLOSS"},
+  {date:"2026-07-30", pair:"XAU/USD", strategy:"REVENGE", pnl:-100, notes:"REVENGE TRADE WITH OUT STOPLOSS"},
   {date:"2026-07-31", pair:"XAU/USD", strategy:"BOS", pnl:11.5, notes:"Risk of 7 dollar its like 1:1.5"}
 ];
 
@@ -939,6 +939,16 @@ let MAX_ABS_PNL = 1;
 let currentMonth, currentYear;
 const WEEKDAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+// Format a Date object as YYYY-MM-DD using its LOCAL components —
+// never toISOString() here, since that converts to UTC first and
+// can silently shift the date by a day depending on the visitor's timezone.
+function toDateKey(dateObj){
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const d = String(dateObj.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 function fmtMoney(v){
   const sign = v > 0 ? "+" : v < 0 ? "−" : "";
@@ -978,7 +988,7 @@ function renderCalendar(){
 
   for(let d=1; d<=daysInMonth; d++){
     const dateObj = new Date(currentYear, currentMonth, d);
-    const key = dateObj.toISOString().slice(0,10);
+    const key = toDateKey(dateObj);
     const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
     const trade = TRADES_BY_DATE[key];
 
@@ -1017,8 +1027,12 @@ function showTradeDetail(dateKey){
   const cell = document.querySelector(`.day-cell[data-date="${dateKey}"]`);
   if(cell) cell.classList.add("active");
 
-  const d = new Date(dateKey);
-  const label = d.toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase();
+  // dateKey is a plain YYYY-MM-DD string, so parse its parts directly
+  // instead of new Date(dateKey) — that constructor treats date-only
+  // strings as UTC midnight, which can print the wrong day locally.
+  const [y, m, day] = dateKey.split("-").map(Number);
+  const dLocal = new Date(y, m - 1, day);
+  const label = dLocal.toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase();
   document.getElementById("tdStamp").textContent = "Entry logged — " + label;
   document.getElementById("tdPair").textContent = trade.pair;
   document.getElementById("tdStrategy").textContent = "Strategy: " + trade.strategy;
@@ -1062,9 +1076,9 @@ document.getElementById("nextMonth").addEventListener("click", () => {
 
   if(data.length){
     const latest = data.reduce((a,b) => a.date > b.date ? a : b);
-    const ld = new Date(latest.date);
-    currentMonth = ld.getMonth();
-    currentYear = ld.getFullYear();
+    const [ly, lm, ld] = latest.date.split("-").map(Number);
+    currentMonth = lm - 1;
+    currentYear = ly;
   } else {
     const now = new Date();
     currentMonth = now.getMonth();

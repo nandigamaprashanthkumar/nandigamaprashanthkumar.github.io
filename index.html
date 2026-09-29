@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Nandigama Prashanth Kumar — Drive to explore</title>
+<meta name="description" content="An interactive, drivable 3D portfolio for Nandigama Prashanth Kumar — engineer, designer, and daily-journaled trader. Steer the car to explore.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzEiIGZpbGw9IiNGMkVDRTAiLz4KICA8Y2lyY2xlIGN4PSIzMiIgY3k9IjMyIiByPSIyOSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQjg1QzNFIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWRhc2hhcnJheT0iMS4yIDIuNiIvPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjIyIiBmaWxsPSIjRUFFMUNFIiBzdHJva2U9IiM4QzgyNzIiIHN0cm9rZS13aWR0aD0iMC44Ii8+CiAgPHRleHQgeD0iMzIiIHk9IjM4LjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLCAnVGltZXMgTmV3IFJvbWFuJywgc2VyaWYiIGZvbnQtc3R5bGU9Iml0YWxpYyIgZm9udC13ZWlnaHQ9IjYwMCIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzI0MUYxOCI+TlBLPC90ZXh0Pgo8L3N2Zz4K">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F2ECE0; --bg-alt:#EAE1CE; --bg-raised:#E3D8C0;
+    --paper:#241F18; --ink:#3A342A; --ink-dim:#6B6252; --muted:#8C8272;
+    --accent:#B85C3E; --accent-ink:#F2ECE0;
+    --gain:#5A8A54; --loss:#B2483A;
+    --line:rgba(36,31,24,0.12); --line-strong:rgba(36,31,24,0.22);
+    --serif:'Fraunces',Georgia,serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:'IBM Plex Mono','SF Mono',monospace;
+  }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0; color:var(--ink);
+    background:linear-gradient(180deg, #EAD8AF 0%, #E6CE9C 40%, #DFBF88 72%, #CDA76C 100%);
+    font-family:var(--sans); overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior:none; touch-action:none;
+  }
+  a{ color:inherit; }
+  button{ font-family:inherit; cursor:pointer; }
+  ::selection{ background:var(--accent); color:var(--accent-ink); }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  #scene{ position:fixed; inset:0; width:100%; height:100%; display:block; z-index:0; outline:none; cursor:grab; }
+  #scene:active{ cursor:grabbing; }
+
+  .grain{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    opacity:0.04; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .vignette{
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+    background:radial-gradient(ellipse 120% 100% at 50% 38%, transparent 52%, rgba(58,42,28,0.10) 78%, rgba(40,28,18,0.26) 100%);
+  }
+
+  /* ---------- INTRO ---------- */
+  #intro{
+    position:fixed; inset:0; z-index:40;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:32px;
+    background:radial-gradient(circle at 50% 30%, #F6F1E6, #E7DCC5);
+    transition:opacity .6s ease, visibility .6s;
+  }
+  #intro.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+  .intro-role{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:20px;
+  }
+  .intro-name{
+    font-family:var(--serif); font-weight:500; color:var(--paper);
+    font-size:clamp(40px,8vw,88px); line-height:0.98; margin:0; letter-spacing:-0.01em;
+  }
+  .intro-name em{ font-style:italic; color:var(--accent); font-weight:400; }
+  .intro-sub{ margin-top:22px; max-width:440px; color:var(--ink-dim); font-size:16px; line-height:1.6; }
+  .intro-keys{
+    margin-top:26px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+  }
+  .key{
+    border:1px solid var(--line-strong); border-radius:7px; padding:6px 10px;
+    background:rgba(255,255,255,0.4); color:var(--ink);
+  }
+  .start-btn{
+    margin-top:34px; font-family:var(--mono); font-size:14px; letter-spacing:0.08em; text-transform:uppercase;
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:100px;
+    padding:15px 34px; transition:transform .15s, box-shadow .2s;
+    box-shadow:0 8px 22px rgba(184,92,62,0.28);
+  }
+  .start-btn:hover{ transform:translateY(-2px); box-shadow:0 12px 28px rgba(184,92,62,0.34); }
+  .intro-note{ margin-top:18px; font-family:var(--mono); font-size:11px; color:var(--muted); }
+
+  /* ---------- HUD ---------- */
+  .hud-hint{
+    position:fixed; left:50%; bottom:calc(18px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%);
+    z-index:20; font-family:var(--mono); font-size:11px; letter-spacing:0.05em; color:var(--ink-dim);
+    background:rgba(242,236,224,0.7); border:1px solid var(--line); border-radius:100px;
+    padding:8px 16px; backdrop-filter:blur(6px); white-space:nowrap; pointer-events:none;
+  }
+  @media (max-width:760px){ .hud-hint{ display:none; } }
+
+  .mark{
+    position:fixed; top:calc(18px + env(safe-area-inset-top,0px)); left:20px; z-index:20;
+    font-family:var(--mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--paper); font-weight:600; pointer-events:none;
+  }
+  .mark span{ color:var(--accent); }
+
+  /* section menu */
+  .menu{
+    position:fixed; top:calc(16px + env(safe-area-inset-top,0px)); right:16px; z-index:22;
+    display:flex; flex-direction:column; gap:7px; align-items:flex-end;
+  }
+  .menu-toggle{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--ink); background:rgba(242,236,224,0.82); border:1px solid var(--line-strong);
+    border-radius:100px; padding:9px 15px; backdrop-filter:blur(8px);
+  }
+  .menu-list{ display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+  .menu-list.collapsed{ display:none; }
+  .menu-item{
+    font-family:var(--mono); font-size:12px; color:var(--ink);
+    background:rgba(242,236,224,0.82); border:1px solid var(--line);
+    border-radius:100px; padding:8px 14px; backdrop-filter:blur(8px);
+    transition:border-color .2s, color .2s, background .2s;
+  }
+  .menu-item:hover,.menu-item.active{ border-color:var(--accent); color:var(--accent); background:rgba(184,92,62,0.08); }
+  .menu-mini{
+    font-family:var(--mono); font-size:11px; color:var(--muted);
+    background:rgba(242,236,224,0.82); border:1px solid var(--line);
+    border-radius:100px; padding:8px 12px; backdrop-filter:blur(8px);
+  }
+  .menu-mini:hover{ color:var(--accent); border-color:var(--accent); }
+
+  /* ---------- CONTENT PANEL ---------- */
+  .panel{
+    position:fixed; left:20px; bottom:20px; z-index:21;
+    width:min(390px, calc(100vw - 40px));
+    max-height:min(66vh, 560px); overflow-y:auto;
+    background:var(--bg); border:1px solid var(--line-strong); border-radius:18px;
+    padding:26px 26px 24px;
+    box-shadow:0 20px 50px rgba(36,31,24,0.18);
+    transform:translateY(24px); opacity:0; pointer-events:none;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s;
+    left:calc(20px + env(safe-area-inset-left,0px));
+  }
+  .panel.open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+  @media (max-width:760px){
+    .panel{
+      left:12px; right:12px; width:auto; bottom:auto;
+      top:calc(58px + env(safe-area-inset-top,0px));
+      max-height:52vh;
+    }
+  }
+  .panel-kicker{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:6px;
+  }
+  .panel-title{
+    font-family:var(--serif); font-weight:500; font-size:27px; line-height:1.05;
+    color:var(--paper); margin:0 0 14px;
+  }
+  .panel-close{
+    position:absolute; top:16px; right:16px;
+    font-family:var(--mono); font-size:11px; color:var(--muted);
+    border:1px solid var(--line-strong); border-radius:100px; padding:5px 11px; background:none;
+  }
+  .panel-close:hover{ color:var(--accent); border-color:var(--accent); }
+  .panel-body{ font-size:15px; line-height:1.62; color:var(--ink-dim); }
+  .panel-body p{ margin:0 0 12px; }
+  .panel-body .lead{ font-family:var(--serif); font-size:19px; line-height:1.45; color:var(--paper); }
+  .panel-body .hl{ color:var(--accent); font-style:italic; }
+  .panel-body .fine{ font-size:13px; color:var(--muted); }
+  .panel-body .grp{ margin-bottom:16px; }
+  .panel-body .grp-h{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:9px; display:flex; align-items:center; gap:8px;
+  }
+  .panel-body .grp-h::before{ content:""; width:12px; height:1px; background:var(--accent); }
+  .panel-body .tags{ display:flex; flex-wrap:wrap; gap:7px; }
+  .panel-body .tags span{
+    font-family:var(--mono); font-size:12px; padding:6px 11px;
+    border:1px solid var(--line-strong); border-radius:100px; color:var(--ink);
+  }
+  .panel-body .xp{ display:flex; flex-direction:column; }
+  .panel-body .xp-row{ padding:11px 0; border-top:1px solid var(--line); }
+  .panel-body .xp-row:first-child{ border-top:none; }
+  .panel-body .xp-date{ font-family:var(--mono); font-size:11px; color:var(--accent); }
+  .panel-body .xp-role{ font-family:var(--serif); font-size:17px; color:var(--paper); margin:2px 0 1px; }
+  .panel-body .xp-meta{ font-size:13px; color:var(--muted); }
+  .panel-body .proj-num{ font-family:var(--mono); font-size:12px; color:var(--accent); }
+  .panel-body .proj-t{ font-family:var(--serif); font-weight:500; font-size:21px; color:var(--paper); margin:8px 0 10px; }
+  .panel-body .tstats{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden; margin:4px 0 14px; }
+  .panel-body .tstat{ background:var(--bg-alt); padding:14px 14px; }
+  .panel-body .tstat b{ display:block; font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); font-weight:500; margin-bottom:6px; }
+  .panel-body .tstat i{ font-style:normal; font-family:var(--mono); font-size:20px; color:var(--paper); }
+  .panel-body .tstat i.gain{ color:var(--gain); } .panel-body .tstat i.loss{ color:var(--loss); }
+  .panel-body .big-link{
+    display:inline-block; font-family:var(--mono); font-size:16px; color:var(--accent);
+    border-bottom:1px solid var(--accent); padding-bottom:3px; margin:4px 0 14px; text-decoration:none;
+  }
+  .panel-body .c-links a{ font-family:var(--mono); font-size:13px; color:var(--ink-dim); text-decoration:none; margin-right:16px; }
+  .panel-body .c-links a:hover{ color:var(--accent); }
+
+  /* ---------- MOBILE CONTROLS ---------- */
+  .touch{ position:fixed; z-index:23; bottom:calc(22px + env(safe-area-inset-bottom,0px)); display:none; user-select:none; -webkit-user-select:none; }
+  body.touch-on .touch{ display:block; }
+  .dpad{ left:calc(18px + env(safe-area-inset-left,0px)); display:grid; grid-template-columns:repeat(3,54px); grid-template-rows:repeat(3,54px); gap:6px; }
+  .pedals{ right:calc(18px + env(safe-area-inset-right,0px)); display:flex; flex-direction:column; gap:10px; align-items:center; }
+  .tbtn{
+    width:54px; height:54px; border-radius:14px;
+    background:rgba(242,236,224,0.85); border:1px solid var(--line-strong); color:var(--paper);
+    font-size:20px; display:flex; align-items:center; justify-content:center;
+    backdrop-filter:blur(6px); touch-action:none;
+  }
+  .tbtn:active{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .tbtn.up{ grid-column:2; grid-row:1; } .tbtn.left{ grid-column:1; grid-row:2; }
+  .tbtn.right{ grid-column:3; grid-row:2; } .tbtn.down{ grid-column:2; grid-row:3; }
+  .tbtn.honk{ width:64px; height:64px; border-radius:100px; font-size:13px; font-family:var(--mono); }
+  .tbtn.gas{ width:64px; height:64px; border-radius:100px; font-size:12px; font-family:var(--mono); background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+</style>
+</head>
+<body>
+
+<canvas id="scene" tabindex="0"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="mark">N.P.K<span>.</span></div>
+
+<nav class="menu" id="menu">
+  <button class="menu-toggle" id="menuToggle" aria-expanded="true">Sections ▾</button>
+  <div class="menu-list" id="menuList"></div>
+  <button class="menu-mini" id="honkBtn" title="Honk (H)">Honk</button>
+  <button class="menu-mini" id="muteBtn" title="Mute">Sound: on</button>
+</nav>
+
+<div class="panel" id="panel" role="dialog" aria-label="Section details">
+  <button class="panel-close" id="panelClose">Close ✕</button>
+  <div class="panel-kicker" id="panelKicker"></div>
+  <h2 class="panel-title" id="panelTitle"></h2>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<div class="hud-hint" id="hudHint">Drag the world to drive · or click it then use W A S D / arrows · H to honk</div>
+
+<!-- mobile controls -->
+<div class="touch dpad" id="dpad">
+  <button class="tbtn up"    data-k="up">▲</button>
+  <button class="tbtn left"  data-k="left">◀</button>
+  <button class="tbtn right" data-k="right">▶</button>
+  <button class="tbtn down"  data-k="down">▼</button>
+</div>
+<div class="touch pedals">
+  <button class="tbtn honk" data-honk="1">HONK</button>
+</div>
+
+<!-- intro -->
+<div id="intro">
+  <div class="intro-role">Programmer Analyst · AI Generalist · UI/UX Designer</div>
+  <h1 class="intro-name">Nandigama <em>Prashanth</em> Kumar</h1>
+  <p class="intro-sub">An off-road portfolio. Take the pickup across the dunes and roll onto any pad to open that part of my story.</p>
+  <div class="intro-keys">
+    <span class="key">W / ▲ accelerate</span>
+    <span class="key">S / ▼ reverse</span>
+    <span class="key">A D / ◀ ▶ steer</span>
+    <span class="key">H honk</span>
+  </div>
+  <button class="start-btn" id="startBtn">Start driving</button>
+  <div class="intro-note">Keys not responding? Click the world once to focus it — or just <strong>drag anywhere to drive</strong>. On-screen controls appear on phones.</div>
+</div>
+
+<!-- trade data (same shape as the main site, used for the Trading pad stats) -->
+<script>
+const TRADES = [
+  {date:"2026-07-01", pnl:53.3},{date:"2026-07-02", pnl:150.9},{date:"2026-07-03", pnl:-16.25},
+  {date:"2026-07-04", pnl:0},{date:"2026-07-06", pnl:10.95},{date:"2026-07-07", pnl:16.95},
+  {date:"2026-07-08", pnl:39.30},{date:"2026-07-09", pnl:-330.04},{date:"2026-07-10", pnl:0.88},
+  {date:"2026-07-12", pnl:-0.58},{date:"2026-07-30", pnl:-100},{date:"2026-07-31", pnl:11.5},
+  {date:"2026-08-06", pnl:-15.85},{date:"2026-08-10", pnl:31},{date:"2026-08-11", pnl:5.05},
+  {date:"2026-08-12", pnl:-68.25},{date:"2026-08-13", pnl:57.70},{date:"2026-08-14", pnl:18.30},
+  {date:"2026-08-17", pnl:41.84},{date:"2026-08-18", pnl:110},{date:"2026-08-19", pnl:380},
+  {date:"2026-09-09", pnl:29},{date:"2026-09-10", pnl:-28.80},{date:"2026-09-11", pnl:110.10},
+  {date:"2026-09-14", pnl:40.83},{date:"2026-09-15", pnl:30.36},{date:"2026-09-16", pnl:-154.45},
+  {date:"2026-09-17", pnl:35.34},{date:"2026-09-18", pnl:27.51},{date:"2026-09-21", pnl:-69.68},
+  {date:"2026-09-22", pnl:32.38},{date:"2026-09-23", pnl:-13.62},{date:"2026-09-24", pnl:52.38},
+  {date:"2026-09-28", pnl:38.80}
+];
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =====================================================================
+   DRIVABLE PORTFOLIO  (Bruno-Simon-inspired arcade world)
+   ---------------------------------------------------------------------
+   - Hand-rolled arcade car physics (no physics engine) for smoothness
+   - Cheap blob shadows instead of shadow maps
+   - Capped pixel ratio; render loop pauses when the tab is hidden
+   - Fully usable without driving: the Sections menu opens any pad
+   ===================================================================== */
+(function(){
+  const canvas = document.getElementById("scene");
+  if(typeof THREE === "undefined"){ return; }
+
+  const isTouch = ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
+  const isSmall = window.matchMedia("(max-width:760px)").matches;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(isTouch) document.body.classList.add("touch-on");
+
+  let renderer;
+  try{
+    renderer = new THREE.WebGLRenderer({ canvas, antialias:!isSmall, alpha:true, powerPreference:"high-performance" });
+  }catch(e){ return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, isSmall?1.5:2));
+  renderer.setClearColor(0x000000, 0);                    // transparent → the CSS gradient sky shows through
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;     // filmic grade for a richer, less "flat demo" look
+  renderer.toneMappingExposure = 1.08;
+  renderer.shadowMap.enabled = !isSmall;                  // soft directional shadows (desktop)
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0xE4CFA2, 44, 172);
+
+  const camera = new THREE.PerspectiveCamera(46, 1, 0.5, 340);
+  camera.position.set(0, 18, -30);
+
+  /* ---- lighting: warm key + cool fill (studio-ish) ---- */
+  scene.add(new THREE.HemisphereLight(0xFFF3DD, 0x5a4a38, 0.62));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.10));
+  const fill = new THREE.DirectionalLight(0xCADCF0, 0.32); fill.position.set(-26, 22, -18); scene.add(fill);
+  const sun = new THREE.DirectionalLight(0xFFDCA0, 1.5);  sun.position.set(48, 30, 26);
+  sun.castShadow = !isSmall;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.near = 2;   sun.shadow.camera.far = 175;
+  sun.shadow.camera.left = -66; sun.shadow.camera.right = 66;
+  sun.shadow.camera.top = 66;   sun.shadow.camera.bottom = -66;
+  sun.shadow.bias = -0.0004;    sun.shadow.normalBias = 0.7;
+  scene.add(sun); scene.add(sun.target);
+
+  /* ---- materials (physically shaded for a designed, richer look) ---- */
+  const S = (c, r, m) => new THREE.MeshStandardMaterial({ color:c, roughness:r==null?0.75:r, metalness:m==null?0:m });
+  const F = (c, r) => new THREE.MeshStandardMaterial({ color:c, roughness:r==null?0.7:r, metalness:0, flatShading:true });
+  const L = (c) => S(c, 0.8, 0);                           // kept so any stray call still works
+  const matAccent    = S(0xB85C3E, 0.44, 0.22);
+  const matAccentLow = S(0x9c4a30, 0.5, 0.2);
+  const matDark      = S(0x241F18, 0.62, 0.1);
+  const matCream     = S(0xEAE1CE, 0.85, 0);
+  const matRaised    = S(0xE3D8C0, 0.82, 0);
+  const matGreen     = F(0x5C8A54, 0.72), matGreenD = F(0x3f6b3a, 0.72);
+  const matGlass     = S(0x27222c, 0.16, 0.35);
+  const matTrunk     = S(0x7a5a3c, 0.85, 0);
+  const matChrome    = S(0xE7DCC2, 0.30, 0.55);
+  const matHead      = new THREE.MeshStandardMaterial({ color:0xFFEBB8, emissive:0xFFCF74, emissiveIntensity:0.9, roughness:0.4 });
+  const matTail      = new THREE.MeshStandardMaterial({ color:0xC24A3A, emissive:0xB2483A, emissiveIntensity:0.85, roughness:0.4 });
+  // off-road / Hilux extras
+  const matMetal   = S(0x2a2a2e, 0.5, 0.6);    // gunmetal (bars, bumpers, snorkel)
+  const matSteel   = S(0x6d6f73, 0.4, 0.7);    // brighter steel trim
+  const matTire    = S(0x1c1a17, 0.9, 0.0);    // rubber
+  const matHubDark = S(0x3a3733, 0.5, 0.4);    // rim
+  const matRock    = F(0x8B7A63, 0.95);        // faceted rocks
+  const matRockD   = F(0x6f5f4a, 0.95);
+  const matCactus  = F(0x4E7A46, 0.8);         // desert green
+  const matShrub   = F(0x8a7b46, 0.9);         // dry brush
+  const matBarrel  = S(0xB85C3E, 0.5, 0.25);   // rusty drum (brand tie-in)
+  const matBarrelB = S(0x2a2a2e, 0.6, 0.3);    // drum bands
+  const matBed     = S(0x1f1c19, 0.85, 0.05);  // truck-bed liner
+
+  /* ---- off-road terrain: a displaced dune heightfield ---- */
+  function terrainH(x, z){
+    const b = 1.15*Math.sin(x*0.055)*Math.cos(z*0.05)
+            + 0.75*Math.sin(x*0.12 + 1.7)*Math.sin(z*0.09)
+            + 0.42*Math.cos(x*0.20 + z*0.17);
+    const damp = Math.min(1, Math.hypot(x, z) / 24);      // calmer near spawn
+    return b * (0.32 + 0.68*damp);
+  }
+  function terrainNormal(x, z){
+    const e = 0.6;
+    const hl = terrainH(x-e,z), hr = terrainH(x+e,z), hd = terrainH(x,z-e), hu = terrainH(x,z+e);
+    return new THREE.Vector3(hl-hr, 2*e, hd-hu).normalize();
+  }
+  (function buildTerrain(){
+    const SEG = isSmall ? 90 : 150, SIZE = 460;
+    const geo = new THREE.PlaneGeometry(SIZE, SIZE, SEG, SEG);
+    geo.rotateX(-Math.PI/2);
+    const pos = geo.attributes.position;
+    const cLo = new THREE.Color(0x9E7C4E), cHi = new THREE.Color(0xD8B784), cRock = new THREE.Color(0x7c6a52);
+    const tmp = new THREE.Color(), col = [];
+    for(let i=0;i<pos.count;i++){
+      const x = pos.getX(i), z = pos.getZ(i), y = terrainH(x, z);
+      pos.setY(i, y);
+      const ht = Math.min(1, Math.max(0, (y + 1.6) / 3.4));
+      tmp.copy(cLo).lerp(cHi, ht);
+      if(Math.random() < 0.08) tmp.lerp(cRock, 0.5);      // rocky speckle
+      col.push(tmp.r, tmp.g, tmp.b);
+    }
+    geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    geo.computeVertexNormals();
+    const ground = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors:true, roughness:0.99, metalness:0 }));
+    ground.receiveShadow = true; scene.add(ground);
+  })();
+
+  /* ---- soft blob-shadow texture (one canvas, reused) ---- */
+  const shadowTex = (function(){
+    const c = document.createElement("canvas"); c.width = c.height = 64;
+    const x = c.getContext("2d");
+    const g = x.createRadialGradient(32,32,2,32,32,30);
+    g.addColorStop(0,"rgba(36,31,24,0.16)"); g.addColorStop(1,"rgba(36,31,24,0)");
+    x.fillStyle = g; x.fillRect(0,0,64,64);
+    return new THREE.CanvasTexture(c);
+  })();
+  function blobShadow(size){
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(size, size),
+      new THREE.MeshBasicMaterial({ map:shadowTex, transparent:true, depthWrite:false })
+    );
+    m.rotation.x = -Math.PI/2; m.position.y = 0.02;
+    return m;
+  }
+
+  /* ---- text-label sprite maker (canvas texture) ---- */
+  function labelSprite(title, sub, tint){
+    tint = tint || "#B85C3E";
+    const c = document.createElement("canvas");
+    const W = 560, H = 232; c.width = W; c.height = H;
+    const x = c.getContext("2d");
+    const cardH = H - 56;
+    // soft drop shadow + card
+    x.save(); x.shadowColor = "rgba(36,31,24,0.30)"; x.shadowBlur = 28; x.shadowOffsetY = 12;
+    x.fillStyle = "#F6F0E4"; roundRect(x, 20, 16, W-40, cardH, 30); x.fill(); x.restore();
+    x.lineWidth = 4; x.strokeStyle = tint; roundRect(x, 20, 16, W-40, cardH, 30); x.stroke();
+    // accent dot
+    x.fillStyle = tint; x.beginPath(); x.arc(56, 16 + cardH/2, 7, 0, Math.PI*2); x.fill();
+    // text
+    x.textAlign = "center";
+    x.fillStyle = "#241F18"; x.font = "600 62px Georgia, serif";
+    x.fillText(title, W/2, sub ? 100 : 120);
+    if(sub){ x.fillStyle = "#8C8272"; x.font = "500 25px 'Courier New', monospace"; x.fillText(sub, W/2, 144); }
+    // little pin pointing down toward the post
+    x.fillStyle = tint; x.beginPath(); x.moveTo(W/2-13, 16+cardH); x.lineTo(W/2+13, 16+cardH); x.lineTo(W/2, H-22); x.closePath(); x.fill();
+    const tex = new THREE.CanvasTexture(c);
+    tex.anisotropy = 4; tex.encoding = THREE.sRGBEncoding;
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, depthWrite:false, toneMapped:false }));
+    spr.scale.set(11.2, 4.6, 1);
+    return spr;
+  }
+  function roundRect(x,a,b,w,h,r){ x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,r); x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+
+  /* =========================================================
+     CONTENT — your portfolio, one entry per pad
+     ========================================================= */
+  const t = TRADES || [];
+  const traded = t.filter(x => x.strategy !== "not traded" && !(x.pnl === 0));
+  const net = t.reduce((s,x)=>s+(x.pnl||0),0);
+  const wins = t.filter(x=>x.pnl>0).length;
+  const best = t.reduce((m,x)=> x.pnl>m ? x.pnl : m, -Infinity);
+  const winRate = traded.length ? Math.round((wins/traded.length)*100) : 0;
+  const money = v => (v>=0?"+$":"−$") + Math.abs(Math.round(v)).toLocaleString();
+
+  const SECTIONS = [
+    { id:"about", label:"About", kicker:"Who", name:"About me", tint:0xB85C3E, html:
+      `<p class="lead">A Computer Science engineer who never settled into one lane — <span class="hl">code, interface design, and AI</span> on one side, and a self-taught, hand-logged trading practice on the other.</p>
+       <p>Currently a Programmer Analyst at <span class="hl">Cognizant</span>, moving through React front-ends, Python and Java systems, AI tooling, cybersecurity fundamentals, and visual design.</p>
+       <p class="fine">BE in Computer Science, Anna University Chennai (2021–2025). Certified in AI Fluency for Nonprofits, AI Fluency Framework &amp; Foundations, and Claude Code in Action.</p>` },
+
+    { id:"skills", label:"Skills", kicker:"Index", name:"What I work with", tint:0xB85C3E, html:
+      `<div class="grp"><div class="grp-h">Engineering</div><div class="tags"><span>React.js</span><span>Java</span><span>Python</span><span>JavaScript</span><span>REST APIs</span></div></div>
+       <div class="grp"><div class="grp-h">AI &amp; Automation</div><div class="tags"><span>AI Generalist</span><span>Claude Code</span><span>Prompt &amp; Workflow Design</span><span>AI Fluency</span></div></div>
+       <div class="grp"><div class="grp-h">Design</div><div class="tags"><span>UI/UX Design</span><span>Graphic Design</span><span>Visual Systems</span><span>Social Media Design</span></div></div>
+       <div class="grp"><div class="grp-h">Other Practices</div><div class="tags"><span>Cybersecurity Fundamentals</span><span>Standards &amp; QA (BIS)</span><span>Market &amp; Trade Analysis</span></div></div>` },
+
+    { id:"experience", label:"Experience", kicker:"Ledger", name:"Where I've worked", tint:0xB85C3E, html:
+      `<div class="xp">
+        <div class="xp-row"><div class="xp-date">MAY 2026 — PRESENT</div><div class="xp-role">Programmer Analyst Trainee (PAT)</div><div class="xp-meta">Cognizant · Hyderabad — after 4 months foundational training in Chennai</div></div>
+        <div class="xp-row"><div class="xp-date">MAR 2025 — JAN 2026</div><div class="xp-role">Software Developer / Social Media Manager</div><div class="xp-meta">TFG – AI &amp; IT Solutions · Hyderabad</div></div>
+        <div class="xp-row"><div class="xp-date">AUG 2024 — FEB 2025</div><div class="xp-role">React Developer</div><div class="xp-meta">TFG – AI &amp; IT Solutions · Hyderabad</div></div>
+        <div class="xp-row"><div class="xp-date">FEB 2024 — APR 2024</div><div class="xp-role">Cybersecurity</div><div class="xp-meta">Corizo</div></div>
+        <div class="xp-row"><div class="xp-date">DEC 2023 — MAR 2024</div><div class="xp-role">Graphic Designer</div><div class="xp-meta">Maven Web Marketing</div></div>
+        <div class="xp-row"><div class="xp-date">JAN 2024 — FEB 2024</div><div class="xp-role">Python Developer</div><div class="xp-meta">Oasis Infobyte · New Delhi</div></div>
+        <div class="xp-row"><div class="xp-date">AUG 2023 — PRESENT</div><div class="xp-role">Member, BIS Standards Club</div><div class="xp-meta">Bureau of Indian Standards</div></div>
+       </div>` },
+
+    { id:"work", label:"Work", kicker:"Selected work", name:"Things I've built", tint:0xB85C3E, html:
+      `<div class="proj-num">01 · Published Research</div>
+       <h4 class="proj-t">Smart Medicine Reminder System</h4>
+       <p>A mobile mHealth assistant built with React Native that schedules medication reminders around a user's real timezone, so the notification lands at the right moment no matter where they are.</p>
+       <div class="tags"><span>React Native</span><span>Timezone-aware</span><span>mHealth</span></div>
+       <p class="fine" style="margin-top:14px">More case studies on the way — this pad grows as the work does.</p>` },
+
+    { id:"trading", label:"Trading", kicker:"Daily practice", name:"Trading journey", tint:0x5A8A54, html:
+      `<p>A disciplined, dated ledger of every session — pair, strategy, and outcome. Here's the shape of it so far:</p>
+       <div class="tstats">
+         <div class="tstat"><b>Sessions logged</b><i>${t.length}</i></div>
+         <div class="tstat"><b>Net result</b><i class="${net>=0?'gain':'loss'}">${money(net)}</i></div>
+         <div class="tstat"><b>Win rate</b><i>${winRate}%</i></div>
+         <div class="tstat"><b>Best day</b><i class="gain">${money(best)}</i></div>
+       </div>
+       <p class="fine">Mostly XAU/USD on break-of-structure and reversal setups. The full, day-by-day journal lives on the scrollable version of this portfolio.</p>` },
+
+    { id:"contact", label:"Contact", kicker:"Say hello", name:"Let's build or trade something", tint:0xB85C3E, html:
+      `<a class="big-link" href="mailto:johnsonprashanth48@gmail.com">johnsonprashanth48@gmail.com</a>
+       <div class="c-links"><a href="https://www.linkedin.com/in/nandigama-prashanth-kumar" target="_blank" rel="noopener">LinkedIn ↗</a></div>
+       <p class="fine" style="margin-top:14px">Hyderabad, Telangana, India — logged daily since 2021.</p>` }
+  ];
+
+  /* ---- lay pads out in a ring, build pad + label ---- */
+  const RING = 40;
+  const pads = [];
+  SECTIONS.forEach((s, i) => {
+    const ang = (i / SECTIONS.length) * Math.PI * 2;
+    const px = Math.cos(ang) * RING, pz = Math.sin(ang) * RING;
+    s.x = px; s.z = pz;
+
+    const gy = terrainH(px, pz);
+    // raised platform (bevelled base + tinted top)
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(7.7, 8.4, 1.1, 56), matRaised);
+    base.position.set(px, gy + 0.25, pz); base.castShadow = true; base.receiveShadow = true; scene.add(base);
+    const top = new THREE.Mesh(new THREE.CylinderGeometry(7.2, 7.2, 0.16, 56),
+      new THREE.MeshStandardMaterial({ color:s.tint, roughness:0.6, metalness:0.04, transparent:true, opacity:0.2 }));
+    top.position.set(px, gy + 0.82, pz); top.receiveShadow = true; scene.add(top);
+    // glowing rim
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(7.35, 0.13, 12, 64),
+      new THREE.MeshStandardMaterial({ color:s.tint, emissive:s.tint, emissiveIntensity:0.5, roughness:0.4, metalness:0.1 }));
+    ring.rotation.x = Math.PI/2; ring.position.set(px, gy + 0.88, pz); scene.add(ring); s.ring = ring;
+
+    // signpost sits just outside the pad so the truck never clips it
+    const sx = Math.cos(ang) * (RING + 6.4), sz = Math.sin(ang) * (RING + 6.4), sgy = terrainH(sx, sz);
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.17, 5.2, 10), matTrunk);
+    post.position.set(sx, sgy + 3.1, sz); post.castShadow = true; scene.add(post);
+    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.3, 14, 14), matAccent);
+    knob.position.set(sx, sgy + 5.75, sz); knob.castShadow = true; scene.add(knob);
+    const spr = labelSprite(s.label, s.name, "#B85C3E");
+    spr.position.set(sx, sgy + 7.1, sz); scene.add(spr);
+
+    pads.push(s);
+  });
+
+  /* ---- decorative low-poly trees + knockable boxes ---- */
+  const rockGeo = new THREE.IcosahedronGeometry(1, 0);
+  function tree(x, z){          // (kept name) — now spawns an off-road prop
+    const gy = terrainH(x, z);
+    const g = new THREE.Group();
+    const kind = Math.random();
+    if(kind < 0.5){
+      // rock cluster
+      const n = 1 + (Math.random()*3|0);
+      for(let i=0;i<n;i++){
+        const r = 0.7 + Math.random()*1.5;
+        const m = new THREE.Mesh(rockGeo, Math.random()<0.5?matRock:matRockD);
+        m.position.set((Math.random()-0.5)*2, r*0.5, (Math.random()-0.5)*2);
+        m.rotation.set(Math.random(),Math.random(),Math.random());
+        m.scale.set(r, r*(0.6+Math.random()*0.4), r); m.castShadow = true; m.receiveShadow = true; g.add(m);
+      }
+    } else if(kind < 0.8){
+      // saguaro-style cactus
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.34,0.42,3.2,10), matCactus);
+      body.position.y = 1.6; body.castShadow = true; g.add(body);
+      const arm = (h)=> new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.24,h,8), matCactus);
+      const a1 = arm(1.1); a1.position.set(0.5,1.9,0); a1.rotation.z=-0.9; a1.castShadow=true; g.add(a1);
+      const a1b = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.9,8), matCactus); a1b.position.set(0.86,2.5,0); a1b.castShadow=true; g.add(a1b);
+      const a2 = arm(1.0); a2.position.set(-0.45,2.2,0); a2.rotation.z=0.95; a2.castShadow=true; g.add(a2);
+      const a2b = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.18,0.8,8), matCactus); a2b.position.set(-0.8,2.75,0); a2b.castShadow=true; g.add(a2b);
+    } else {
+      // dry desert shrub
+      const n = 3 + (Math.random()*3|0);
+      for(let i=0;i<n;i++){
+        const m = new THREE.Mesh(rockGeo, matShrub);
+        const r = 0.5 + Math.random()*0.5;
+        m.position.set((Math.random()-0.5)*1.6, r*0.6, (Math.random()-0.5)*1.6);
+        m.scale.setScalar(r); m.castShadow = true; g.add(m);
+      }
+    }
+    g.position.set(x, gy, z); g.rotation.y = Math.random()*Math.PI;
+    const sh = blobShadow(3.2); sh.position.set(x, gy+0.03, z); scene.add(sh);
+    scene.add(g);
+  }
+  // ring of trees between pads + a few scattered
+  for(let i=0;i<SECTIONS.length;i++){
+    const a = ((i+0.5)/SECTIONS.length)*Math.PI*2;
+    tree(Math.cos(a)*RING, Math.sin(a)*RING);
+    tree(Math.cos(a)*(RING+10), Math.sin(a)*(RING+10));
+  }
+  [[16,16],[-18,10],[12,-20],[-14,-16],[24,-4],[-26,-2],[6,26],[-8,-28]].forEach(p=>tree(p[0],p[1]));
+
+  const boxes = [];
+  function makeBox(x,z){
+    const s = 0.72, half = 0.75;
+    const g = new THREE.Group();
+    const drum = new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.6,1.5,16), Math.random()<0.5?matBarrel:matMetal);
+    drum.castShadow = true; drum.receiveShadow = true; g.add(drum);
+    [-0.45,0,0.45].forEach(yy=>{ const band = new THREE.Mesh(new THREE.CylinderGeometry(0.63,0.63,0.1,16), matBarrelB); band.position.y = yy; band.castShadow = true; g.add(band); });
+    g.position.set(x, terrainH(x,z)+half, z); scene.add(g);
+    const sh = blobShadow(1.9); scene.add(sh);
+    boxes.push({ m:g, sh, vx:0, vz:0, spin:0, s, half });
+  }
+  // a loose pile near spawn to knock around
+  for(let i=0;i<16;i++){
+    const a = Math.random()*Math.PI*2, r = 6 + Math.random()*12;
+    makeBox(Math.cos(a)*r, Math.sin(a)*r + 4);
+  }
+
+  /* ---- ambient dust motes for depth ---- */
+  const dustN = isSmall ? 60 : 150;
+  const dGeo = new THREE.BufferGeometry();
+  const dPos = new Float32Array(dustN*3);
+  for(let i=0;i<dustN;i++){
+    const a = Math.random()*Math.PI*2, r = Math.random()*72;
+    dPos[i*3] = Math.cos(a)*r; dPos[i*3+1] = 1 + Math.random()*9; dPos[i*3+2] = Math.sin(a)*r;
+  }
+  dGeo.setAttribute("position", new THREE.BufferAttribute(dPos, 3));
+  const dust = new THREE.Points(dGeo, new THREE.PointsMaterial({
+    color:0xCBA778, size:0.5, transparent:true, opacity:0.5, sizeAttenuation:true, depthWrite:false
+  }));
+  scene.add(dust);
+
+  /* ---- dust kicked up behind the wheels ---- */
+  const TRAIL = isSmall ? 44 : 80;
+  const trGeo = new THREE.BufferGeometry();
+  const trPos = new Float32Array(TRAIL*3);
+  const trVel = new Float32Array(TRAIL*3);
+  const trLife = new Float32Array(TRAIL);
+  for(let i=0;i<TRAIL;i++) trPos[i*3+1] = -60;         // park unused points offscreen
+  trGeo.setAttribute("position", new THREE.BufferAttribute(trPos, 3));
+  const trail = new THREE.Points(trGeo, new THREE.PointsMaterial({
+    color:0xD8C09A, size:1.5, transparent:true, opacity:0.55, sizeAttenuation:true, depthWrite:false
+  }));
+  scene.add(trail);
+  let trHead = 0, dustClock = 0;
+  function emitDust(dt){
+    for(let i=0;i<TRAIL;i++){
+      if(trLife[i] > 0){
+        trLife[i] -= dt;
+        trPos[i*3]   += trVel[i*3]*dt;
+        trPos[i*3+1] += trVel[i*3+1]*dt;
+        trPos[i*3+2] += trVel[i*3+2]*dt;
+        trVel[i*3+1] += 1.4*dt;                         // billow upward
+        if(trLife[i] <= 0) trPos[i*3+1] = -60;
+      }
+    }
+    dustClock += dt;
+    if(!reduce && Math.abs(state.speed) > 8 && dustClock > 0.03){
+      dustClock = 0;
+      const fx2 = Math.sin(state.yaw), fz2 = Math.cos(state.yaw);
+      const rx = Math.cos(state.yaw), rz = -Math.sin(state.yaw);
+      const sideoff = (Math.random()<0.5?-1:1) * (typeof WHEEL_X!=="undefined"?WHEEL_X:1.2);
+      const bx = state.x - fx2*1.9 + rx*sideoff, bz = state.z - fz2*1.9 + rz*sideoff;
+      const i = trHead; trHead = (trHead+1) % TRAIL;
+      trPos[i*3]   = bx + (Math.random()-0.5)*0.4;
+      trPos[i*3+1] = state.y + 0.3;
+      trPos[i*3+2] = bz + (Math.random()-0.5)*0.4;
+      trVel[i*3]   = -fx2*2 + (Math.random()-0.5)*1.6;
+      trVel[i*3+1] = 1 + Math.random()*1.6;
+      trVel[i*3+2] = -fz2*2 + (Math.random()-0.5)*1.6;
+      trLife[i] = 0.8 + Math.random()*0.5;
+    }
+    trGeo.attributes.position.needsUpdate = true;
+  }
+
+  /* =========================================================
+     CAR
+     ========================================================= */
+  const car = new THREE.Group();
+  (function buildHilux(){
+    function part(w,h,d,mat,x,y,z){ const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat); m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true; car.add(m); return m; }
+    function cyl(r1,r2,h,mat,x,y,z,rx,ry,rz){ const m = new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,14), mat); m.position.set(x,y,z); m.rotation.set(rx||0,ry||0,rz||0); m.castShadow = true; car.add(m); return m; }
+    const B = matAccent;                                   // body colour (terracotta)
+
+    // chassis / cladding (lifted stance)
+    part(2.35, 0.55, 5.0, matMetal, 0, 1.02, -0.1);        // dark lower cladding
+    part(2.25, 0.60, 4.4, B,        0, 1.52, -0.1);        // main body
+
+    // hood + front clip
+    part(2.20, 0.34, 1.5, B,        0, 1.66, 1.95);        // hood
+    part(2.25, 0.72, 0.35, matMetal, 0, 1.45, 2.62);       // front fascia
+    for(let i=0;i<4;i++) part(1.5, 0.08, 0.12, matSteel, 0, 1.28 + i*0.16, 2.72);   // grille slats
+    part(0.5, 0.26, 0.16, matHead, -0.78, 1.55, 2.7);      // headlights
+    part(0.5, 0.26, 0.16, matHead,  0.78, 1.55, 2.7);
+
+    // bull bar / brush guard
+    cyl(0.09,0.09,2.2, matSteel, 0, 1.28, 2.9, 0,0,Math.PI/2);
+    part(0.12,0.95,0.12, matSteel, -0.9, 1.2, 2.88);
+    part(0.12,0.95,0.12, matSteel,  0.9, 1.2, 2.88);
+    cyl(0.08,0.08,0.9, matSteel, 0, 1.68, 2.9, 0,0,Math.PI/2);
+    part(1.9,0.16,0.28, matMetal, 0, 0.82, 2.74);          // skid plate
+
+    // double-cab greenhouse
+    part(2.15, 0.86, 2.5, B,       0, 2.22, 0.2);          // cab lower
+    part(1.98, 0.74, 2.3, matGlass, 0, 2.78, 0.2);         // glass
+    part(2.04, 0.16, 2.46, B,      0, 3.2, 0.2);           // roof
+    [-1.0,1.0].forEach(sx=>{ part(0.1,0.74,0.12,B,sx,2.78,1.34); part(0.1,0.74,0.12,B,sx,2.78,-0.94); }); // pillars
+
+    // snorkel up the right A-pillar
+    cyl(0.11,0.11,1.9, matMetal, 1.08, 2.55, 1.3);
+    cyl(0.12,0.15,0.34, matMetal, 1.08, 3.5, 1.44, Math.PI/2,0,0);
+
+    // cargo bed
+    part(2.15, 0.66, 2.0, B,     0, 1.9, -2.05);           // bed outer
+    part(1.86, 0.5, 1.78, matBed, 0, 2.02, -2.05);         // liner
+    part(2.15, 0.5, 0.14, B,     0, 1.86, -3.02);          // tailgate
+    cyl(0.6,0.6,0.34, matTire, 0, 1.82, -2.35, Math.PI/2,0,0);  // spare tyre in bed
+
+    // sports / roll bar
+    cyl(0.1,0.1,2.0, matMetal, 0, 2.62, -1.05, 0,0,Math.PI/2);
+    part(0.1,1.05,0.1, matMetal, -0.95, 2.1, -1.05);
+    part(0.1,1.05,0.1, matMetal,  0.95, 2.1, -1.05);
+
+    // roof rack + light bar
+    part(1.9,0.08,2.15, matMetal, 0, 3.3, 0.2);
+    part(1.7,0.22,0.16, matSteel, 0, 3.42, 1.45);
+    part(1.5,0.13,0.09, matHead,  0, 3.42, 1.53);          // forward lamps (emissive)
+
+    // rear
+    part(0.5,0.3,0.12, matTail, -0.8, 1.78, -3.08);
+    part(0.5,0.3,0.12, matTail,  0.8, 1.78, -3.08);
+    part(2.1,0.26,0.32, matMetal, 0, 1.08, -3.06);         // rear bumper
+
+    // side steps + arch flares + mirrors
+    [-1.22,1.22].forEach(sx=>{
+      part(0.16,0.14,2.4, matMetal, sx, 1.02, 0.1);        // rock slider
+      part(0.22,0.5,1.05, matMetal, sx, 1.35, 1.6);        // front flare
+      part(0.22,0.5,1.05, matMetal, sx, 1.35, -1.9);       // rear flare
+      part(0.3,0.18,0.1, matMetal, sx*1.04, 2.6, 1.15);    // mirror
+    });
+  })();
+
+  // big off-road wheels (tyre + rim + hub), geometry pre-rotated so the axle runs along X
+  const tireGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.52, 22); tireGeo.rotateZ(Math.PI/2);
+  const rimGeo  = new THREE.CylinderGeometry(0.44, 0.44, 0.54, 8); rimGeo.rotateZ(Math.PI/2);
+  const hubGeo  = new THREE.CylinderGeometry(0.14, 0.14, 0.58, 8); hubGeo.rotateZ(Math.PI/2);
+  function wheel(){
+    const g = new THREE.Group();
+    const tire = new THREE.Mesh(tireGeo, matTire);    tire.castShadow = true;
+    const rim  = new THREE.Mesh(rimGeo,  matHubDark);  rim.castShadow = true;
+    const hub  = new THREE.Mesh(hubGeo,  matSteel);
+    g.add(tire); g.add(rim); g.add(hub); return g;
+  }
+  const WHEEL_Y = 0.84, WHEEL_X = 1.26, FR_Z = 1.62, RE_Z = -1.92;
+  const wFL = wheel(), wFR = wheel(), wRL = wheel(), wRR = wheel();
+  const pFL = new THREE.Group(), pFR = new THREE.Group();  // front steer pivots
+  pFL.position.set(-WHEEL_X, WHEEL_Y, FR_Z); pFR.position.set(WHEEL_X, WHEEL_Y, FR_Z);
+  pFL.add(wFL); pFR.add(wFR); car.add(pFL); car.add(pFR);
+  wRL.position.set(-WHEEL_X, WHEEL_Y, RE_Z); wRR.position.set(WHEEL_X, WHEEL_Y, RE_Z);
+  car.add(wRL); car.add(wRR);
+  car.rotation.order = "YXZ";
+  scene.add(car);
+  const carShadow = blobShadow(6.6); scene.add(carShadow);
+
+  /* ---- car state ---- */
+  const state = { x:0, z:0, y:0, yaw:0, speed:0 };
+  const ACCEL = 26, MAX_FWD = 30, MAX_REV = 12, TURN = 2.3, BOUND = 92;
+  const input = { throttle:0, steer:0 };
+  const INTRO_DUR = 2.0;
+  let introT = 0, simTime = 0, carPitch = 0, carRoll = 0;
+
+  /* =========================================================
+     INPUT
+     ========================================================= */
+  const keys = {};
+  const KEYMAP = {
+    ArrowUp:"up", KeyW:"up", ArrowDown:"down", KeyS:"down",
+    ArrowLeft:"left", KeyA:"left", ArrowRight:"right", KeyD:"right"
+  };
+  window.addEventListener("keydown", e=>{
+    if(e.code === "KeyH"){ honk(); }
+    const k = KEYMAP[e.code]; if(k){ keys[k]=true; e.preventDefault(); }
+  }, {passive:false});
+  window.addEventListener("keyup", e=>{ const k = KEYMAP[e.code]; if(k) keys[k]=false; });
+
+  // on-screen dpad
+  document.querySelectorAll("#dpad .tbtn").forEach(btn=>{
+    const k = btn.dataset.k;
+    const on = e=>{ e.preventDefault(); keys[k]=true; };
+    const off = e=>{ e.preventDefault(); keys[k]=false; };
+    btn.addEventListener("touchstart", on, {passive:false});
+    btn.addEventListener("touchend", off); btn.addEventListener("touchcancel", off);
+    btn.addEventListener("mousedown", on); btn.addEventListener("mouseup", off); btn.addEventListener("mouseleave", off);
+  });
+  document.querySelectorAll("[data-honk]").forEach(b=>{
+    b.addEventListener("touchstart", e=>{ e.preventDefault(); honk(); }, {passive:false});
+    b.addEventListener("click", honk);
+  });
+
+  // Drag-to-drive: works even when the iframe can't hold keyboard focus.
+  const drag = { active:false, throttle:0, steer:0, sx:0, sy:0 };
+  function focusGame(){ try{ canvas.focus(); window.focus && window.focus(); }catch(e){} }
+
+  canvas.addEventListener("pointerdown", e=>{
+    focusGame();
+    drag.active = true; drag.sx = e.clientX; drag.sy = e.clientY;
+    drag.throttle = 0; drag.steer = 0;
+    try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  canvas.addEventListener("pointermove", e=>{
+    if(!drag.active) return;
+    const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+    drag.throttle = Math.max(-1, Math.min(1, -dy / 90));   // drag up = go
+    drag.steer    = Math.max(-1, Math.min(1, -dx / 90));   // drag left = steer left
+  });
+  function endDrag(){ drag.active = false; drag.throttle = 0; drag.steer = 0; }
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", endDrag);
+
+  function readInput(){
+    const kt = (keys.up?1:0) - (keys.down?1:0);
+    const ks = (keys.left?1:0) - (keys.right?1:0);
+    input.throttle = Math.max(-1, Math.min(1, kt + drag.throttle));
+    input.steer    = Math.max(-1, Math.min(1, ks + drag.steer));
+  }
+
+  /* =========================================================
+     AUDIO (honk)
+     ========================================================= */
+  let actx = null, muted = false;
+  function ensureAudio(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
+  function beep(t, f, d){
+    if(!actx) return;
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = "square"; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.16, t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+d);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t+d+0.03);
+  }
+  function honk(){ ensureAudio(); if(!actx || muted) return; const n = actx.currentTime; beep(n,440,0.13); beep(n+0.15,392,0.17); }
+
+  /* =========================================================
+     PANEL + MENU
+     ========================================================= */
+  const panel = document.getElementById("panel");
+  const panelKicker = document.getElementById("panelKicker");
+  const panelTitle = document.getElementById("panelTitle");
+  const panelBody = document.getElementById("panelBody");
+  let activeId = null, proxId = null;
+
+  function openZone(id, moveCar){
+    const z = SECTIONS.find(s=>s.id===id); if(!z) return;
+    if(moveCar){
+      state.x = z.x * 0.74; state.z = z.z * 0.74;
+      state.yaw = Math.atan2(-z.x, -z.z); state.speed = 0; // face the world centre
+    }
+    panelKicker.textContent = z.kicker;
+    panelTitle.textContent = z.name;
+    panelBody.innerHTML = z.html;
+    panel.classList.add("open");
+    activeId = id; markMenu(id);
+  }
+  function closeZone(){ panel.classList.remove("open"); activeId = null; markMenu(null); }
+  document.getElementById("panelClose").addEventListener("click", closeZone);
+
+  // build menu
+  const menuList = document.getElementById("menuList");
+  SECTIONS.forEach(s=>{
+    const b = document.createElement("button");
+    b.className = "menu-item"; b.dataset.id = s.id; b.textContent = s.label;
+    b.addEventListener("click", ()=> openZone(s.id, true));
+    menuList.appendChild(b);
+  });
+  function markMenu(id){
+    menuList.querySelectorAll(".menu-item").forEach(b=> b.classList.toggle("active", b.dataset.id===id));
+  }
+  const menuToggle = document.getElementById("menuToggle");
+  menuToggle.addEventListener("click", ()=>{
+    const collapsed = menuList.classList.toggle("collapsed");
+    menuToggle.textContent = collapsed ? "Sections ▸" : "Sections ▾";
+    menuToggle.setAttribute("aria-expanded", String(!collapsed));
+  });
+  if(isSmall){ menuList.classList.add("collapsed"); menuToggle.textContent = "Sections ▸"; menuToggle.setAttribute("aria-expanded","false"); }
+  document.getElementById("honkBtn").addEventListener("click", honk);
+  const muteBtn = document.getElementById("muteBtn");
+  muteBtn.addEventListener("click", ()=>{ muted = !muted; muteBtn.textContent = "Sound: " + (muted?"off":"on"); });
+
+  /* =========================================================
+     SIMULATION
+     ========================================================= */
+  function step(dt){
+    readInput();
+
+    // longitudinal
+    if(input.throttle !== 0) state.speed += input.throttle * ACCEL * dt;
+    else state.speed -= state.speed * 1.8 * dt;              // coast/brake
+    state.speed -= state.speed * 0.35 * dt;                   // rolling drag
+    state.speed = Math.max(-MAX_REV, Math.min(MAX_FWD, state.speed));
+    if(Math.abs(state.speed) < 0.02) state.speed = 0;
+
+    // steering — scales with speed, reverses in reverse
+    const grip = Math.min(Math.abs(state.speed) / 5, 1) * (state.speed >= 0 ? 1 : -1);
+    state.yaw += input.steer * TURN * grip * dt;
+
+    // integrate
+    const fx = Math.sin(state.yaw), fz = Math.cos(state.yaw);
+    state.x += fx * state.speed * dt;
+    state.z += fz * state.speed * dt;
+
+    // soft world bounds
+    if(state.x >  BOUND){ state.x =  BOUND; state.speed *= 0.4; }
+    if(state.x < -BOUND){ state.x = -BOUND; state.speed *= 0.4; }
+    if(state.z >  BOUND){ state.z =  BOUND; state.speed *= 0.4; }
+    if(state.z < -BOUND){ state.z = -BOUND; state.speed *= 0.4; }
+
+    // ---- terrain-following placement + body tilt (off-road) ----
+    state.y = terrainH(state.x, state.z);
+    car.position.set(state.x, state.y, state.z);
+
+    const LL = 1.7;
+    const rvx = Math.cos(state.yaw), rvz = -Math.sin(state.yaw);       // right vector
+    const ahead = terrainH(state.x + fx*LL, state.z + fz*LL) - terrainH(state.x - fx*LL, state.z - fz*LL);
+    const side  = terrainH(state.x + rvx*LL, state.z + rvz*LL) - terrainH(state.x - rvx*LL, state.z - rvz*LL);
+    const tPitch = -Math.atan2(ahead, 2*LL);
+    const tRoll  =  Math.atan2(side,  2*LL);
+    carPitch += (tPitch - carPitch) * Math.min(1, 8*dt);
+    carRoll  += (tRoll  - carRoll)  * Math.min(1, 8*dt);
+    car.rotation.set(carPitch, state.yaw, carRoll);
+    carShadow.position.set(state.x, state.y + 0.05, state.z);
+
+    // wheels: roll (big tyres) + steer
+    const roll = state.speed * dt * 1.28;
+    wFL.rotation.x += roll; wFR.rotation.x += roll; wRL.rotation.x += roll; wRR.rotation.x += roll;
+    const steerA = input.steer * 0.42;
+    pFL.rotation.y = steerA; pFR.rotation.y = steerA;
+
+    // kicked-up dust behind the wheels
+    emitDust(dt);
+
+    // knockable boxes
+    for(const b of boxes){
+      const dx = b.m.position.x - state.x, dz = b.m.position.z - state.z;
+      const d = Math.hypot(dx, dz);
+      const hitR = 2.4 + b.s*0.5;
+      if(d < hitR && d > 0.001){
+        const nx = dx/d, nz = dz/d;
+        const push = Math.max(Math.abs(state.speed), 6) * 0.7;
+        b.vx += nx * push; b.vz += nz * push;
+        b.spin += (Math.random()-0.5) * 6;
+      }
+      b.m.position.x += b.vx * dt; b.m.position.z += b.vz * dt;
+      b.vx *= (1 - 2.4*dt); b.vz *= (1 - 2.4*dt);
+      b.spin *= (1 - 3*dt); b.m.rotation.y += b.spin * dt;
+      // keep inside the field
+      const bl = 96;
+      b.m.position.x = Math.max(-bl, Math.min(bl, b.m.position.x));
+      b.m.position.z = Math.max(-bl, Math.min(bl, b.m.position.z));
+      const bh = (b.half || b.s*0.5);
+      b.m.position.y = terrainH(b.m.position.x, b.m.position.z) + bh;
+      b.sh.position.set(b.m.position.x, b.m.position.y - bh + 0.05, b.m.position.z);
+    }
+
+    // proximity → open/close pads
+    let near = null, bd = 1e9;
+    for(const z of SECTIONS){
+      const d = Math.hypot(state.x - z.x, state.z - z.z);
+      if(d < 7.6 && d < bd){ bd = d; near = z.id; }
+    }
+    if(near !== proxId){
+      proxId = near;
+      if(near) openZone(near, false);
+      else if(activeId) closeZone();
+    }
+
+    // ambient motion (skipped under reduced-motion)
+    if(!reduce){
+      dust.rotation.y += dt * 0.02;
+      const pulse = 0.42 + Math.sin(simTime * 2.2) * 0.16;
+      for(const z of SECTIONS){ if(z.ring) z.ring.material.emissiveIntensity = (z.id === activeId ? 0.95 : pulse); }
+    }
+
+    // camera — cinematic intro sweep, then a smooth chase cam
+    const camDist = 23, baseHigh = 13 + Math.min(Math.abs(state.speed), 30) * 0.06;
+    let tx, ty, tz, lax = state.x + fx*4, lay = state.y + 2.2, laz = state.z + fz*4;
+    if(introT > 0){
+      introT = Math.max(0, introT - dt);
+      const p = 1 - introT / INTRO_DUR;                          // 0 → 1
+      const e = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2)/2;   // ease in-out
+      const ang = state.yaw + Math.PI + (1 - e) * Math.PI * 1.4; // orbit that settles behind the truck
+      const dist = 36 - e*13, high = 26 - e*12;
+      tx = state.x + Math.sin(ang)*dist; tz = state.z + Math.cos(ang)*dist; ty = state.y + high;
+      lax = state.x; lay = state.y + 1.9; laz = state.z;
+    } else {
+      tx = state.x - fx*camDist; tz = state.z - fz*camDist; ty = state.y + baseHigh;
+    }
+    const k = Math.min(1, (introT > 0 ? 6 : 4) * dt);
+    camera.position.x += (tx - camera.position.x) * k;
+    camera.position.y += (ty - camera.position.y) * k;
+    camera.position.z += (tz - camera.position.z) * k;
+    camera.lookAt(lax, lay, laz);
+  }
+
+  /* =========================================================
+     RENDER LOOP
+     ========================================================= */
+  function resize(){
+    const w = window.innerWidth, h = window.innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+  }
+  window.addEventListener("resize", resize); resize();
+
+  let running = false, raf = null, last = 0;
+  function loop(ts){
+    if(!running) return;
+    const dt = Math.min((ts - last) / 1000 || 0, 0.05); last = ts;
+    step(dt);
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(loop);
+  }
+  function start(){ if(running) return; running = true; last = performance.now(); raf = requestAnimationFrame(loop); }
+  function stop(){ running = false; if(raf) cancelAnimationFrame(raf); }
+  document.addEventListener("visibilitychange", ()=>{ document.hidden ? stop() : start(); });
+
+  // render one frame immediately so the world is there behind the intro
+  renderer.render(scene, camera);
+
+  /* =========================================================
+     INTRO / START
+     ========================================================= */
+  const intro = document.getElementById("intro");
+  document.getElementById("startBtn").addEventListener("click", ()=>{
+    ensureAudio();
+    intro.classList.add("hide");
+    introT = reduce ? 0 : INTRO_DUR;
+    start();
+    focusGame();
+  });
+  // if someone dismisses via keyboard driving before pressing start
+  window.addEventListener("keydown", ()=>{ if(!running && intro.classList.contains("hide")===false){ intro.classList.add("hide"); introT = reduce ? 0 : INTRO_DUR; start(); } }, {once:true});
+})();
+</script>
+</body>
+</html>
